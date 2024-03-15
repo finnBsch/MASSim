@@ -11,6 +11,8 @@ class MASSim: public DrawableObject {
 private:
     int n_agents;
     std::vector<Agent*> agents;
+
+    bool correctAgentPairs();
 public:
     void step();
     MASSim(int n_agents);

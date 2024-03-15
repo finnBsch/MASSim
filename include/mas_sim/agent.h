@@ -11,12 +11,12 @@ struct AgentConfig {
     float dt = 0.01f; // s
     float speed = 3.0f; // m/s
     int fov_angle = 360;
-    float perception_radius = 8.0f;
+    float perception_radius = 4.0f;
+    float body_radius = 0.08f;
 };
 
 struct AgentVizConfig {
     int n_pts_fov = 20;
-    float body_radius = 0.02;
 };
 
 class Agent: public DrawableObject {
@@ -51,8 +51,10 @@ public:
     void pickAgents();
     const Eigen::Matrix<float, 3, 1>& getPose() const;
     void reset(float x_max, float y_max);
+    void correctPose(float x, float y);
 
     // Param get set
+    float getRadius();
 };
 
 #endif //MASSIM_AGENT_H

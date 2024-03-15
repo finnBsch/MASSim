@@ -32,12 +32,12 @@ Agent::Agent(const std::vector<Agent *>* agents, AgentConfig config):
 }
 
 Agent::Agent(const std::vector<Agent *>* agents):
-        agent_body_viz(viz_config.body_radius),
+        agent_body_viz(config.body_radius),
         fov_viz(viz_config.n_pts_fov)
 {
     this->agents = agents;
     // Viz
-    agent_body_viz.setOrigin(viz_config.body_radius, viz_config.body_radius);
+    agent_body_viz.setOrigin(config.body_radius, config.body_radius);
     fov_viz.setFillColor(sf::Color::Transparent);
     fov_viz.setOutlineColor(sf::Color(50, 50, 50));
     fov_viz.setOutlineThickness(0.01);
@@ -89,4 +89,15 @@ void Agent::step() {
     pose = pose + motion_input;
     this->setPosition(pose(0, 0), pose(1, 0));
     this->setRotation(pose(2, 0) *180.0f / M_PIf);
+}
+
+void Agent::correctPose(float x, float y) {
+    pose(0,0) = x;
+    pose(1,0) = y;
+    this->setPosition(pose(0, 0), pose(1, 0));
+    this->setRotation(pose(2, 0) *180.0f / M_PIf);
+}
+
+float Agent::getRadius() {
+    return config.body_radius;
 }
