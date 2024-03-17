@@ -79,8 +79,10 @@ void Agent::reset(float x_max, float y_max) {
     static std::mt19937 gen(rd());
     static std::uniform_real_distribution<float> distr_x(0, x_max);
     static std::uniform_real_distribution<float> distr_y(0, y_max);
+    static std::uniform_real_distribution<float> distr_phi(0, 2 * M_PI);
     pose(0, 0) = distr_x(gen);
     pose(1, 0) = distr_y(gen);
+    pose(2, 0) = distr_phi(gen);
     this->setPosition(pose(0, 0), pose(1, 0));
     this->setRotation(pose(2, 0) *180.0f / M_PIf);
 }

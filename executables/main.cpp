@@ -3,7 +3,7 @@
 //
 #include "mas_sim/mas_sim.h"
 int main(){
-    MASSim sim(100);
+    MASSim sim(170);
     Viz viz;
     viz.addDrawable(&sim);
     while(true){

@@ -9,14 +9,14 @@
 
 struct AgentConfig {
     float dt = 0.01f; // s
-    float speed = 3.0f; // m/s
+    float speed = 5.0f; // m/s
     int fov_angle = 360;
     float perception_radius = 4.0f;
-    float body_radius = 0.08f;
+    float body_radius = 0.04f;
 };
 
 struct AgentVizConfig {
-    int n_pts_fov = 20;
+    int n_pts_fov = 40;
 };
 
 class Agent: public DrawableObject {

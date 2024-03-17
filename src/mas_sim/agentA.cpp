@@ -23,12 +23,17 @@ void AgentA::calculateMotion() {
 
         motion_input(0, 0) = cosf(angle) * config.dt * config.speed;
         motion_input(1, 0) = sinf(angle) * config.dt * config.speed;
+//        static std::uniform_real_distribution<float> distr(-10*M_PI/180, 10 * M_PI/180);
+//        float angle = distr(gen);
+//        pose(2, 0) += angle;
+//        motion_input(0, 0) = cosf(pose(2, 0)) * config.dt * config.speed;
+//        motion_input(1, 0) = sinf(pose(2, 0)) * config.dt * config.speed;
     }
     else if(!inViewA || !inViewB) {
         Agent* visible_agent = (inViewA) ? chosen_agent_A : chosen_agent_B;
         Eigen::Matrix<float, 3, 1> dir = visible_agent->getPose() - pose;
         float norm_2 = powf(dir(0, 0), 2) + powf(dir(1, 0), 2);
-        if (norm_2 > 1.0f) { // TODO hack for robustness
+        if (norm_2 > 0.5f) { // TODO hack for robustness
             dir = dir / sqrtf(norm_2);
         }
         std::cout << norm_2 << std::endl;
