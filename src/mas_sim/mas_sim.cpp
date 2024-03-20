@@ -34,12 +34,6 @@ void MASSim::step() {
 
 }
 
-void MASSim::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    for(auto& agent: agents){
-        target.draw(*agent, states);
-        auto pose = agent->getPose();
-    }
-}
 
 bool MASSim::correctAgentPairs() {
     bool collision_free = false;

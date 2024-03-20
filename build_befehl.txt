@@ -1,0 +1,3 @@
+emcc -I /usr/include/ -I include -o massim.js -Oz -s MODULARIZE=1  -s EXPORT_NAME=createModule --bind  src/mas_sim/mas_sim.cpp src/mas_sim/agent.cpp src/mas_sim/agentA.cpp src/mas_sim/agentB.cpp
+
+ABER GEHT NIUCHT ;000000000000000000000

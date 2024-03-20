@@ -7,7 +7,7 @@
 #include "agentA.h"
 #include "agentB.h"
 
-class MASSim: public DrawableObject {
+class MASSim{
 private:
     int n_agents;
     std::vector<Agent*> agents;
@@ -17,7 +17,6 @@ public:
     void step();
     MASSim(int n_agents);
 
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 };
 
 #endif //MASSIM_MAS_SIM_H
