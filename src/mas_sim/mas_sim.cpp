@@ -3,10 +3,12 @@
 //
 #include "mas_sim/mas_sim.h"
 #include "mas_sim/agent.h"
+#include "vector"
 #include <iostream>
 
 MASSim::MASSim(int n_agents):
-        n_agents(n_agents)
+        n_agents(n_agents),
+        agents()
 {
     for(int i = 0; i < n_agents; i++){
         agents.push_back(new AgentA(&agents, AgentConfig()));

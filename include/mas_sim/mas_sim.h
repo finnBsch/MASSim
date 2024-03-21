@@ -6,7 +6,8 @@
 #define MASSIM_MAS_SIM_H
 #include "agentA.h"
 #include "agentB.h"
-
+#include "agent.h"
+#include "vector"
 class MASSim{
 private:
     int n_agents;
