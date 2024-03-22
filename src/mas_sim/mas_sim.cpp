@@ -21,6 +21,17 @@ MASSim::MASSim(int n_agents):
     }
 }
 
+
+MASSim::MASSim(int n_agents, float size_x, float size_y): n_agents(n_agents), agents() {
+    for(int i = 0; i < n_agents; i++){
+        agents.push_back(new AgentA(&agents, AgentConfig()));
+        agents.back()->reset(size_x, size_y);
+    }
+    for(auto& agent: agents){
+        agent->pickAgents();
+    }
+}
+
 void MASSim::step() {
     auto start = high_resolution_clock::now();
     for (auto& agent: agents) {
@@ -120,3 +131,4 @@ void MASSim::reset() {
 std::vector<Agent *> MASSim::getAgentsDirect() {
     return agents;
 }
+

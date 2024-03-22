@@ -22,6 +22,7 @@ EMSCRIPTEN_BINDINGS(my_module){
 //        register_vector<Agent*>("AgentVec");
         class_<MASSim>("MASSim")
                 .constructor<int>()
+                .constructor<int, float, float>()
                 .function("nAgents", &MASSim::getN)
                 .function("step", &MASSim::step)
                 .function("getAgents", &MASSim::getAgents)

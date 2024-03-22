@@ -21,6 +21,7 @@ public:
     std::vector<Agent*> getAgentsDirect();
     int getN() const;
     MASSim(int n_agents);
+    MASSim(int n_agents, float size_x, float size_y);
 
 };
 
