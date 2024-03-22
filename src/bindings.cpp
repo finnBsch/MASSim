@@ -28,6 +28,7 @@ EMSCRIPTEN_BINDINGS(my_module){
                 .function("getAgents", &MASSim::getAgents)
 //                .function("getAgentsDirect", &MASSim::getAgentsDirect)
                 .function("reset", &MASSim::reset)
+                .function("setSpeed", &MASSim::setSpeed)
                 ;
 //                .function("incrementX", &MyClass::incrementX)
 //                .property("x", &MyClass::getX, &MyClass::setX)

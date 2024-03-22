@@ -22,6 +22,7 @@ public:
     int getN() const;
     MASSim(int n_agents);
     MASSim(int n_agents, float size_x, float size_y);
+    void setSpeed(float speed);
 
 };
 

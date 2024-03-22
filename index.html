@@ -17,7 +17,7 @@
     <canvas id="simulationCanvas"></canvas>
     <div id="controls">
         <label for="speed">Speed:</label>
-        <input type="range" id="speed" min="1" max="10" value="5">
+        <input type="range" id="speed" min="1" max="20" value="10">
         <button id="resetBtn">Reset</button>
     </div>
 </div>
@@ -27,7 +27,11 @@
         // console.log(sim.nAgents()); // prints 22
 
         const canvas = document.getElementById('simulationCanvas');
+        var slide = document.getElementById('speed');
 
+        slide.onchange = function() {
+            setSpeed(this.value);
+        }
 
         const ctx = canvas.getContext('2d');
         ctx.canvas.width  = window.innerWidth;
@@ -88,12 +92,16 @@
 
             // cancelAnimationFrame(animationId);
             sim.reset();
-            agents = simulationLib.getAgents();
+            // agents = sim.getAgents();
             // updateSimulation();
+        }
+        function setSpeed(speed){
+            sim.setSpeed(speed/2);
+            // console.log(speed.value);
         }
         setTimeout(updateSimulation, 20);
         animationId = requestAnimationFrame(drawAgents);
-        // speedInput.addEventListener('input', resetSimulation);
+        // speedInput.addEventListener('input', setSpeed);
         resetBtn.addEventListener('click', resetSimulation);
         ctx.restore()
     };

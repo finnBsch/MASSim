@@ -84,3 +84,7 @@ float Agent::getX() {
 float Agent::getY() {
     return pose(1);
 }
+
+void Agent::setSpeed(float speed) {
+    config.speed = speed;
+}

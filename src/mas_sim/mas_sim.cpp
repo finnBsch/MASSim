@@ -37,15 +37,15 @@ void MASSim::step() {
     for (auto& agent: agents) {
         agent->calculateMotion();
     }
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    std::cout << "After motion update " << duration.count() <<std::endl;
+//    auto stop = high_resolution_clock::now();
+//    auto duration = duration_cast<microseconds>(stop - start);
+//    std::cout << "After motion update " << duration.count() <<std::endl;
     for (auto& agent: agents) {
         agent->step();
     }
-    stop = high_resolution_clock::now();
-    duration = duration_cast<microseconds>(stop - start);
-    std::cout << "After step " << duration.count() <<std::endl;
+//    stop = high_resolution_clock::now();
+//    duration = duration_cast<microseconds>(stop - start);
+//    std::cout << "After step " << duration.count() <<std::endl;
     bool collision_free = false;
     while(!collision_free) {
         collision_free = true;
@@ -53,9 +53,9 @@ void MASSim::step() {
             collision_free = false;
         }
     }
-    stop = high_resolution_clock::now();
-    duration = duration_cast<microseconds>(stop - start);
-    std::cout << "After step " << duration.count() <<std::endl;
+//    stop = high_resolution_clock::now();
+//    duration = duration_cast<microseconds>(stop - start);
+//    std::cout << "After step " << duration.count() <<std::endl;
 }
 
 
@@ -130,5 +130,12 @@ void MASSim::reset() {
 
 std::vector<Agent *> MASSim::getAgentsDirect() {
     return agents;
+}
+
+void MASSim::setSpeed(float speed) {
+    for (auto& agent:agents){
+        agent->setSpeed(speed);
+    }
+
 }
 

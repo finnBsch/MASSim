@@ -52,6 +52,7 @@ public:
     float getRadius();
     float getX();
     float getY();
+    void setSpeed(float speed);
 };
 
 #endif //MASSIM_AGENT_H
