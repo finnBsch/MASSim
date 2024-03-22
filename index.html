@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Multi-Agent Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!--<script>-->
+<!--    // var Module = {-->
+<!--    //     onRuntimeInitialized: function() {-->
+<!--    //         console.log('lerp result: ' + Module.lerp(1, 2, 0.5));-->
+<!--    //     }-->
+<!--    // };-->
+<!--</script>-->
+<div id="container">
+    <canvas id="simulationCanvas"></canvas>
+    <div id="controls">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="1" max="10" value="5">
+        <button id="resetBtn">Reset</button>
+    </div>
+</div>
+<script src="/mas_sim.js"></script>
+<script>
+    Module.onRuntimeInitialized = _ => {
+        const sim = new Module.MASSim(500);
+        // console.log(sim.nAgents()); // prints 22
+
+        const canvas = document.getElementById('simulationCanvas');
+
+        const ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        canvas.width = 1000;
+        canvas.height = 1000;
+
+        const speedInput = document.getElementById('speed');
+        const resetBtn = document.getElementById('resetBtn');
+
+        let agents = sim.getAgents();
+        var animationId;
+        function getMethods(obj) {
+            var result = [];
+            for (var id in obj) {
+                try {
+                    if (typeof(obj[id]) == "function") {
+                        result.push(id + ": " + obj[id].toString());
+                    }
+                } catch (err) {
+                    result.push(id + ": inaccessible");
+                }
+            }
+            return result;
+        }
+        function drawAgents() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const nagents= sim.nAgents();
+            for (let i = 0; i < nagents; i++) {
+                const agent = agents.get(i);
+                // alert(getMethods(agent).join("\n"));
+
+                ctx.beginPath();
+                ctx.arc(agent[0]*100, agent[1]*100, 2.0, 0, 2 * Math.PI);
+                ctx.fillStyle = agent.color;
+                ctx.fill();
+            }
+            // console.log(performance.now())
+            animationId = requestAnimationFrame(drawAgents);
+        }
+        function updateSimulation() {
+            var t = performance.now();
+            sim.step();
+            console.log(performance.now() - t);
+            agents = sim.getAgents();
+            console.log(performance.now() - t);
+            console.log("---")
+            setTimeout(updateSimulation, 20);
+        }
+
+        function resetSimulation() {
+
+            // cancelAnimationFrame(animationId);
+            sim.reset();
+            agents = simulationLib.getAgents();
+            // updateSimulation();
+        }
+        setTimeout(updateSimulation, 20);
+        animationId = requestAnimationFrame(drawAgents);
+        // speedInput.addEventListener('input', resetSimulation);
+        resetBtn.addEventListener('click', resetSimulation);
+        ctx.restore()
+    };
+</script>
+</body>
+</html>

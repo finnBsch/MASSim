@@ -18,7 +18,7 @@ void AgentA::calculateMotion() {
         // Random Movement
         static std::random_device rd;
         static std::mt19937 gen(rd());
-        static std::uniform_real_distribution<float> distr(0, 2*M_PIf);
+        static std::uniform_real_distribution<float> distr(0, 2*(float)M_PI);
         float angle = distr(gen);
 
         motion_input(0, 0) = cosf(angle) * config.dt * config.speed;
@@ -36,7 +36,7 @@ void AgentA::calculateMotion() {
         if (norm_2 > 0.5f) { // TODO hack for robustness
             dir = dir / sqrtf(norm_2);
         }
-        std::cout << norm_2 << std::endl;
+//        std::cout << norm_2 << std::endl;
         motion_input = dir * config.dt * config.speed;
 
     }
@@ -60,7 +60,7 @@ void AgentA::calculateMotion() {
         if (norm_2 > 1.0f) { // TODO hack for robustness
             movement_dir = movement_dir / sqrtf(norm_2);
         }
-        std::cout << norm_2 << std::endl;
+//        std::cout << norm_2 << std::endl;
         motion_input = movement_dir * config.dt * config.speed;
     }
 }

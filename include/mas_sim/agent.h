@@ -7,7 +7,7 @@
 #include <eigen3/Eigen/Dense>
 
 struct AgentConfig {
-    float dt = 0.01f; // s
+    float dt = 0.02f; // s
     float speed = 5.0f; // m/s
     int fov_angle = 360;
     float perception_radius = 4.0f;
@@ -50,6 +50,8 @@ public:
 
     // Param get set
     float getRadius();
+    float getX();
+    float getY();
 };
 
 #endif //MASSIM_AGENT_H

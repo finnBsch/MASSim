@@ -76,3 +76,11 @@ void Agent::correctPose(float x, float y) {
 float Agent::getRadius() {
     return config.body_radius;
 }
+
+float Agent::getX() {
+    return pose(0);
+}
+
+float Agent::getY() {
+    return pose(1);
+}

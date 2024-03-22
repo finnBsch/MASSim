@@ -16,6 +16,10 @@ private:
     bool correctAgentPairs();
 public:
     void step();
+    void reset();
+    std::vector<std::array<float, 2>> getAgents();
+    std::vector<Agent*> getAgentsDirect();
+    int getN() const;
     MASSim(int n_agents);
 
 };

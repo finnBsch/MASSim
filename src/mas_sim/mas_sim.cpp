@@ -79,3 +79,29 @@ bool MASSim::correctAgentPairs() {
     }
     return required_correction;
 }
+
+int MASSim::getN() const {
+    return n_agents;
+}
+
+std::vector<std::array<float, 2>> MASSim::getAgents() {
+    std::vector<std::array<float, 2>> agents_vec(n_agents);
+    for (int i = 0; i < n_agents; i++){
+        auto pose = agents[i]->getPose();
+        agents_vec[i] = std::array<float, 2>{pose[0], pose[1]};
+    }
+    return agents_vec;
+}
+
+void MASSim::reset() {
+    for(int i = 0; i < n_agents; i++){
+        agents[i]->reset(10.0f, 10.0f);
+    }
+    for(auto& agent: agents){
+        agent->pickAgents();
+    }
+}
+
+std::vector<Agent *> MASSim::getAgentsDirect() {
+    return agents;
+}

@@ -26,6 +26,7 @@ find_package(Eigen3 3.3 NO_MODULE)
 
 # Make an automatic library - will be static or dynamic based on user setting
 if (DEFINED EMSCRIPTEN)
+
     add_library(mas_sim
             ${HEADER_LIST}
             mas_sim/mas_sim.cpp
@@ -34,11 +35,12 @@ if (DEFINED EMSCRIPTEN)
             mas_sim/agentB.cpp
             mas_sim/agentA.cpp
             bindings.cpp)
-    set(CMAKE_EXECUTABLE_SUFFIX ".wasm")
-    set_target_properties(mas_sim PROPERTIES COMPILE_FLAGS "-Os -s SIDE_MODULE=1 ")
-    set_target_properties(mas_sim PROPERTIES LINK_FLAGS    "-Os -s WASM=1 -s SIDE_MODULE=1 -s STANDALONE_WASM --no-entry")
-    target_include_directories(mas_sim PUBLIC ../include PRIVATE ${tomlplusplus_SOURCE_DIR}/include ../ext_include/)
-#    target_link_libraries (mas_sim Eigen3::Eigen)
+#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --bind")
+#    set_target_properties(mas_sim PROPERTIES LINK_FLAGS "--bind")
+
+    target_include_directories(mas_sim PRIVATE ../include  ../ext_include/)
+    set_target_properties(mas_sim PROPERTIES LINK_FLAGS "-s ENVIRONMENT=web -s SINGLE_FILE=1 -s MODULARIZE -s 'EXPORT_NAME=DummyCppLibrary' --bind")
+
 
 else()
     find_package(SFML COMPONENTS graphics REQUIRED)
