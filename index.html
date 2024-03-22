@@ -33,9 +33,9 @@
         ctx.canvas.width  = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
         const ratio = window.innerWidth/window.innerHeight;
-        const sim = new Module.MASSim(700, 20, 20/ratio);
+        const sim = new Module.MASSim(700, 15, 15/ratio);
         ctx.beginPath();
-        ctx.setTransform(window.innerWidth/20, 0, 0, window.innerHeight/20*ratio, 0, 0);
+        ctx.setTransform(window.innerWidth/15, 0, 0, window.innerHeight/15*ratio, 0, 0);
 
         // canvas.width = 1000;
         // canvas.height = 1000;
