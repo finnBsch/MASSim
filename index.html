@@ -29,8 +29,11 @@
 
         const canvas = document.getElementById('simulationCanvas');
 
+
         const ctx = canvas.getContext('2d');
         ctx.beginPath();
+        ctx.setTransform(100, 0, 0, 100, 0, 0);
+
         canvas.width = 1000;
         canvas.height = 1000;
 
@@ -54,13 +57,14 @@
         }
         function drawAgents() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.setTransform(100, 0, 0, 100, 0, 0);
             const nagents= sim.nAgents();
             for (let i = 0; i < nagents; i++) {
                 const agent = agents.get(i);
                 // alert(getMethods(agent).join("\n"));
 
                 ctx.beginPath();
-                ctx.arc(agent[0]*100, agent[1]*100, 2.0, 0, 2 * Math.PI);
+                ctx.arc(agent[0], agent[1], .04, 0, 2 * Math.PI);
                 ctx.fillStyle = agent.color;
                 ctx.fill();
             }
@@ -68,12 +72,12 @@
             animationId = requestAnimationFrame(drawAgents);
         }
         function updateSimulation() {
-            var t = performance.now();
+            // var t = performance.now();
             sim.step();
-            console.log(performance.now() - t);
+            // console.log(performance.now() - t);
             agents = sim.getAgents();
-            console.log(performance.now() - t);
-            console.log("---")
+            // console.log(performance.now() - t);
+            // console.log("---")
             setTimeout(updateSimulation, 20);
         }
 
