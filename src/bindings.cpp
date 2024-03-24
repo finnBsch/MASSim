@@ -21,7 +21,7 @@ EMSCRIPTEN_BINDINGS(my_module){
         register_vector<std::array<float, 2>>("ArrayVec");
 //        register_vector<Agent*>("AgentVec");
         class_<MASSim>("MASSim")
-                .constructor<int>()
+//                .constructor<int>()
                 .constructor<int, float, float>()
                 .function("nAgents", &MASSim::getN)
                 .function("step", &MASSim::step)

@@ -9,6 +9,7 @@ include(CMakePrintHelpers)
 # Optionally glob, but only for CMake 3.12 or later:
 file(GLOB_RECURSE HEADER_LIST CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h")
 cmake_print_variables(HEADER_LIST)
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -g")
 
 find_package(Eigen3 3.3 NO_MODULE)
 #find_package(SFML COMPONENTS graphics REQUIRED)
@@ -50,7 +51,8 @@ else()
             mas_sim/agent.cpp
             mas_sim/agentB.cpp
             mas_sim/agentA.cpp
-)
+            mas_sim/grid.cpp
+    )
     target_include_directories(mas_sim_lib PUBLIC ../include PRIVATE ${tomlplusplus_SOURCE_DIR}/include)
     target_link_libraries (mas_sim_lib PUBLIC Eigen3::Eigen sfml-graphics)
     target_compile_features(mas_sim_lib PUBLIC cxx_std_20)

@@ -16,9 +16,19 @@
 <div id="container">
     <canvas id="simulationCanvas"></canvas>
     <div id="controls">
-        <label for="speed">Speed:</label>
-        <input type="range" id="speed" min="1" max="20" value="10">
-        <button id="resetBtn">Reset</button>
+        <div style="text-align: right; display: flex; align-items: center;">
+            <label for="speed">Speed:</label>
+            <input type="range" id="speed" min="1" max="20" value="10">
+            <span id="speedIndicator">10</span>
+        </div>
+        <div style="text-align: right; display: flex; align-items: center;">
+            <label for="numAgents">Number of Agents:</label>
+            <input type="range" id="numAgents" min="1" max="100" value="50">
+            <span id="numAgentsIndicator">50</span>
+        </div>
+        <div style="text-align: right;">
+            <button id="resetBtn">Reset</button>
+        </div>
     </div>
 </div>
 <script src="mas_sim.js"></script>
@@ -28,16 +38,20 @@
 
         const canvas = document.getElementById('simulationCanvas');
         var slide = document.getElementById('speed');
+        const speedIndicator = document.getElementById('speedIndicator');
+        const numAgentsSlider = document.getElementById('numAgents');
 
         slide.onchange = function() {
             setSpeed(this.value);
+            speedIndicator.textContent = this.value;
+
         }
 
         const ctx = canvas.getContext('2d');
         ctx.canvas.width  = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
         const ratio = window.innerWidth/window.innerHeight;
-        const sim = new Module.MASSim(700, 15, 15/ratio);
+        const sim = new Module.MASSim(200, 15, 15/ratio);
         ctx.beginPath();
         ctx.setTransform(window.innerWidth/15, 0, 0, window.innerHeight/15*ratio, 0, 0);
 

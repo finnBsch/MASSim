@@ -49,7 +49,7 @@ bool Agent::inView(Agent *agent, bool fov_check) {
     return false;
 }
 
-const Eigen::Matrix<float, 3, 1> &Agent::getPose() const {
+const Eigen::Matrix<float, 2, 1> &Agent::getPose() const {
     return pose;
 }
 
@@ -58,14 +58,14 @@ void Agent::reset(float x_max, float y_max) {
     static std::mt19937 gen(rd());
     static std::uniform_real_distribution<float> distr_x(0, x_max);
     static std::uniform_real_distribution<float> distr_y(0, y_max);
-    static std::uniform_real_distribution<float> distr_phi(0, 2 * M_PI);
     pose(0, 0) = distr_x(gen);
     pose(1, 0) = distr_y(gen);
-    pose(2, 0) = distr_phi(gen);
+    grid_id_x = -1;
+    grid_id_y = -1;
 }
 
-void Agent::step() {
-    pose = pose + motion_input;
+void Agent::step(float dt) {
+    pose = pose + velocity*dt;
 }
 
 void Agent::correctPose(float x, float y) {
@@ -78,13 +78,38 @@ float Agent::getRadius() {
 }
 
 float Agent::getX() {
-    return pose(0);
+    return pose(0, 0);
 }
 
 float Agent::getY() {
-    return pose(1);
+    return pose(1, 0);
 }
 
 void Agent::setSpeed(float speed) {
     config.speed = speed;
+}
+
+void Agent::setGridId(int idx, int idy) {
+    grid_id_x = idx;
+    grid_id_y = idy;
+}
+
+int Agent::getGridX() {
+    return grid_id_x;
+}
+
+int Agent::getGridY() {
+    return grid_id_y;
+}
+
+void Agent::setVelocity(Eigen::Matrix<float, 2, 1> velocity) {
+    this->velocity = velocity;
+}
+
+void Agent::correctPose(Eigen::Matrix<float, 2, 1> pose) {
+    this->pose = pose;
+}
+
+const Eigen::Matrix<float, 2, 1> &Agent::getVelocity() const {
+    return velocity;
 }

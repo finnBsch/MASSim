@@ -21,8 +21,8 @@ void AgentA::calculateMotion() {
         static std::uniform_real_distribution<float> distr(0, 2*(float)M_PI);
         float angle = distr(gen);
 
-        motion_input(0, 0) = cosf(angle) * config.dt * config.speed;
-        motion_input(1, 0) = sinf(angle) * config.dt * config.speed;
+        velocity(0, 0) = cosf(angle) * config.speed;
+        velocity(1, 0) = sinf(angle) * config.speed;
 //        static std::uniform_real_distribution<float> distr(-10*M_PI/180, 10 * M_PI/180);
 //        float angle = distr(gen);
 //        pose(2, 0) += angle;
@@ -31,13 +31,16 @@ void AgentA::calculateMotion() {
     }
     else if(!inViewA || !inViewB) {
         Agent* visible_agent = (inViewA) ? chosen_agent_A : chosen_agent_B;
-        Eigen::Matrix<float, 3, 1> dir = visible_agent->getPose() - pose;
+        Eigen::Matrix<float, 2, 1> dir = visible_agent->getPose() - pose;
         float norm_2 = powf(dir(0, 0), 2) + powf(dir(1, 0), 2);
+//        if (sqrtf(norm_2) < 2 * config.body_radius){
+//            dir *= 0;
+//        }
         if (norm_2 > 0.5f) { // TODO hack for robustness
             dir = dir / sqrtf(norm_2);
         }
 //        std::cout << norm_2 << std::endl;
-        motion_input = dir * config.dt * config.speed;
+        velocity = dir * config.speed;
 
     }
     else if((!inViewB)){
@@ -53,15 +56,18 @@ void AgentA::calculateMotion() {
         float dot = (pose(0, 0) - poseA(0, 0)) * (poseB(0, 0) - pose(0, 0))
                     + (pose(1, 0) - poseA(1, 0)) * (poseB(1, 0) - pose(1, 0));
         float t = fmax(0, fmin(1, dot / length_dir_squared));
-        auto projection = poseA + t * dir;
+//        auto projection = poseA + t * dir;
 //     Eigen::Matrix<float, 3, 1> movement_dir = projection - pose;
-        Eigen::Matrix<float, 3, 1> movement_dir = (poseB + poseA) / 2.0f - pose;
+        Eigen::Matrix<float, 2, 1> movement_dir = (poseB + poseA) / 2.0f - pose;
         float norm_2 = powf(movement_dir(0, 0), 2) + powf(movement_dir(1, 0), 2);
+//        if(sqrtf(norm_2) < 2 * config.body_radius){
+//            movement_dir*=0;
+//        }
         if (norm_2 > 1.0f) { // TODO hack for robustness
             movement_dir = movement_dir / sqrtf(norm_2);
         }
 //        std::cout << norm_2 << std::endl;
-        motion_input = movement_dir * config.dt * config.speed;
+        velocity = movement_dir *  config.speed;
     }
 }
 

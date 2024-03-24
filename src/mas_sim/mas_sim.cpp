@@ -8,79 +8,80 @@
 
 #include <chrono>
 using namespace std::chrono;
-MASSim::MASSim(int n_agents):
-        n_agents(n_agents),
-        agents()
+
+
+
+MASSim::MASSim(int n_agents, float size_x, float size_y): n_agents(n_agents), agents(),
+                                                          size_x(size_x), size_y(size_y),
+                                                          toCheck()
 {
-    for(int i = 0; i < n_agents; i++){
-        agents.push_back(new AgentA(&agents, AgentConfig()));
-        agents.back()->reset(10.0f, 10.0f);
-    }
-    for(auto& agent: agents){
-        agent->pickAgents();
-    }
-}
-
-
-MASSim::MASSim(int n_agents, float size_x, float size_y): n_agents(n_agents), agents() {
     for(int i = 0; i < n_agents; i++){
         agents.push_back(new AgentA(&agents, AgentConfig()));
         agents.back()->reset(size_x, size_y);
     }
-    for(auto& agent: agents){
+    for(auto agent: agents){
         agent->pickAgents();
     }
-}
-
-void MASSim::step() {
-    auto start = high_resolution_clock::now();
-    for (auto& agent: agents) {
-        agent->calculateMotion();
-    }
-//    auto stop = high_resolution_clock::now();
-//    auto duration = duration_cast<microseconds>(stop - start);
-//    std::cout << "After motion update " << duration.count() <<std::endl;
-    for (auto& agent: agents) {
-        agent->step();
-    }
-//    stop = high_resolution_clock::now();
-//    duration = duration_cast<microseconds>(stop - start);
-//    std::cout << "After step " << duration.count() <<std::endl;
-    bool collision_free = false;
-    while(!collision_free) {
-        collision_free = true;
-        if(correctAgentPairs()){
-            collision_free = false;
-        }
-    }
-//    stop = high_resolution_clock::now();
-//    duration = duration_cast<microseconds>(stop - start);
-//    std::cout << "After step " << duration.count() <<std::endl;
-}
-
-
-bool MASSim::correctAgentPairs() {
-    bool collision_free = false;
-    bool required_correction = false;
-    // Get all possible agent pairs
-    std::vector<std::array<int, 2>> agent_pairs;
+//    std::vector<std::array<int, 2>> agent_pairs;
     for(int i = 0; i < n_agents; i++){
         for(int j = i+1; j < n_agents; j++){
             std::array<int, 2> pair = {i, j};
             agent_pairs.push_back(pair);
         }
     }
-    while(!collision_free){
-        collision_free = true;
-        for (auto& pair: agent_pairs){
-            int i = pair[0];
-            int j = pair[1];
+    grid = Grid(agents, size_x, size_y, 0.5);
+}
+
+void MASSim::step() {
+//    auto start = high_resolution_clock::now();
+    for (auto &agent: agents) {
+        agent->calculateMotion();
+    }
+    for(int i = 0; i < sub_steps; i++) {
+
+//    auto stop = high_resolution_clock::now();
+//    auto duration = duration_cast<microseconds>(stop - start);
+//    std::cout << "After motion update " << duration.count() <<std::endl;
+        for (auto &agent: agents) {
+            agent->step(1.0f/100.0f / (float)sub_steps);
+            correctSingleAgent(agent);
+        }
+//    stop = high_resolution_clock::now();
+//    duration = duration_cast<microseconds>(stop - start);
+//    std::cout << "After step " << duration.count() <<std::endl;
+        correctAgentPairs();
+//        for(int k = 0; k < agents.size(); k++) {
+//            checkSingleAgent(k);
+//        }
+//        while(!toCheck.empty()){
+//            int agent_id = toCheck.front();
+//            checkSingleAgent(agent_id);
+//            toCheck.pop();
+//        }
+//        for(int k = 0; k < 20 ; k++) {
+//            collision_free = true;
+//            grid.clear();
+//            grid.addAgents(agents);
+//            if(!correctGridBased()) {
+//                collision_free = false;
+//            }
+//        }
+//}
+//    stop = high_resolution_clock::now();
+//    duration = duration_cast<microseconds>(stop - start);
+//    std::cout << "After step " << duration.count() <<std::endl;
+    }
+}
+void MASSim::checkSingleAgent(int i) {
+//    bool collision_free = false;
+//    bool required_correction = false;
+    for (int j = 0; j < agents.size(); j++){
+        if(i != j) {
             float col_distance = agents[i]->getRadius() + agents[j]->getRadius();
 
             auto pose1 = agents[i]->getPose();
             auto pose2 = agents[j]->getPose();
-            if(abs(pose1(0) - pose2(0)) < col_distance && abs(pose1(1) - pose2(1)) < col_distance) {
-
+            if (abs(pose1(0) - pose2(0)) < col_distance && abs(pose1(1) - pose2(1)) < col_distance) {
                 double x1 = pose1(0, 0);
                 double y1 = pose1(1, 0);
                 double x2 = pose2(0, 0);
@@ -95,15 +96,77 @@ bool MASSim::correctAgentPairs() {
                     y1 -= 0.5 * difference * dy / d;
                     x2 += 0.5 * difference * dx / d;
                     y2 += 0.5 * difference * dy / d;
-                    collision_free = false;
-                    required_correction = true;
+//                    collision_free = false;
+//                    required_correction = true;
+                    agents[i]->correctPose(x1, y1);
+                    agents[j]->correctPose(x2, y2);
+//                    checkSingleAgent(i);
+//                    checkSingleAgent(j);
+                    toCheck.push(i);
+                    toCheck.push(j);
                 }
-                agents[i]->correctPose(x1, y1);
-                agents[j]->correctPose(x2, y2);
+
+//                checkSingleAgent(agent);
+//                checkSingleAgent(agent1);
             }
         }
     }
-    return required_correction;
+}
+
+bool MASSim::correctAgentPairs() {
+    // TODO Add walls
+    bool collision_free = false;
+    bool required_correction = false;
+    // Get all possible agent pairs
+//    std::vector<std::array<int, 2>> agent_pairs;
+//    for(int i = 0; i < n_agents; i++){
+//        for(int j = i+1; j < n_agents; j++){
+//            std::array<int, 2> pair = {i, j};
+//            agent_pairs.push_back(pair);
+//        }
+//    }
+    while(!collision_free){
+        collision_free = true;
+        for (int i = 0; i < agents.size(); i++){
+            for (int j = i + 1; j < agents.size(); j++) {
+//                int i = pair[0];
+//                int j = pair[1];
+                float col_distance = 0.08; // TODO THIS IS HARDCODED FOR SPEED
+
+                auto pose1 = agents[i]->getPose();
+                auto pose2 = agents[j]->getPose();
+                if (abs(pose1(0) - pose2(0)) < col_distance && abs(pose1(1) - pose2(1)) < col_distance) {
+
+
+                    auto delta = pose2 - pose1;
+
+                    double d = delta.norm();
+                    if (d < col_distance && d > 0.0001) {
+                        auto vel1 = agents[i]->getVelocity();
+                        auto vel2 = agents[j]->getVelocity();
+                        auto delta_speed = vel2 - vel1;
+                        auto col_normal = delta / d;
+                        float constraint_speed = col_normal.dot(delta_speed);
+                        double difference = col_distance - d + 0.0001f;
+                        // Correct the position such that the distance is collision_radius
+                        pose1 -= difference * col_normal * 0.5;
+                        pose2 += difference * col_normal * 0.5;
+//                    collision_free = false;
+                        required_correction = true;
+                        agents[i]->correctPose(pose1);
+                        agents[j]->correctPose(pose2);
+                        auto impulse = col_normal * (-constraint_speed * (1.0f + 0.25f));
+                        agents[i]->setVelocity(vel1 - impulse * 0.5f);
+                        agents[j]->setVelocity(vel2 + impulse * 0.5f);
+                        correctSingleAgent(agents[i]);
+                        correctSingleAgent(agents[j]);
+                    }
+
+                }
+            }
+        }
+    }
+    return false;
 }
 
 int MASSim::getN() const {
@@ -122,6 +185,7 @@ std::vector<std::array<float, 2>> MASSim::getAgents() {
 void MASSim::reset() {
     for(int i = 0; i < n_agents; i++){
         agents[i]->reset(10.0f, 10.0f);
+        correctSingleAgent(agents[i]);
     }
     for(auto& agent: agents){
         agent->pickAgents();
@@ -137,5 +201,93 @@ void MASSim::setSpeed(float speed) {
         agent->setSpeed(speed);
     }
 
+}
+
+bool MASSim::correctGridBased() {
+    int gnx = grid.getNx();
+    int gny = grid.getNy();
+    bool collision_free = true;
+    for (int i = 0; i < gnx; i++){
+        for (int j = 0; j < gny; j++){
+
+            collision_free = collision_free &&  correctSingleCell(i, j);
+        }
+    }
+    return collision_free;
+}
+
+bool MASSim::correctSingleCell(int nx, int ny) {
+    bool collision_free = true;
+    GridCell* agents_cell = &grid.grid_cells[nx][ny];
+    int idx0 = (nx > 0) ? -1 : 0;
+    int idx1 = (nx < grid.getNx() - 1) ? 1 : 0;
+    int idy0 = (ny > 0) ? -1 : 0;
+    int idy1 = (ny < grid.getNy() - 1) ? 1 : 0;
+    for (auto agent: agents_cell->agents){
+        for (int i = idx0; i <= idx1; i++){
+            for (int j = idy0; j <= idy1; j++){
+                collision_free = collision_free && correctAgentGroup(agent, &grid.grid_cells[nx + i][ny + j]);
+            }
+        }
+    }
+    return collision_free;
+}
+
+bool MASSim::correctAgentGroup(Agent *agent0, GridCell * agents_group) {
+//    std::cout << agents_group->agents.size() <<std::endl;
+    bool collision_free = true;
+    for (auto agent1: agents_group->agents) {
+        // Do collision checks..
+        if (agent1 != agent0) {
+            float col_distance = agent0->getRadius() + agent1->getRadius();
+
+            auto pose1 = agent0->getPose();
+            auto pose2 = agent1->getPose();
+            if (true || abs(pose1(0) - pose2(0)) < col_distance && abs(pose1(1) - pose2(1)) < col_distance) {
+
+                float x1 = pose1(0, 0);
+                float y1 = pose1(1, 0);
+                float x2 = pose2(0, 0);
+                float y2 = pose2(1, 0);
+                float dx = x2 - x1;
+                float dy = y2 - y1;
+                float d = sqrtf(dx * dx + dy * dy);
+                if (d < col_distance) {
+                    float delta = (col_distance - d + 0.01f)*0.5f;
+                    // Correct the position such that the distance is collision_radius
+                    x1 -= delta * dx / d;
+                    y1 -= delta * dy / d;
+                    x2 += delta * dx / d;
+                    y2 += delta * dy / d;
+                    collision_free = false;
+//                    std::cout << x1 << " " << y1 << " " << x2 << " " << y2 << std::endl;
+                    agent0->correctPose(x1, y1);
+                    agent1->correctPose(x2, y2);
+                    correctSingleAgent(agent0);
+                    correctSingleAgent(agent1);
+                }
+            }
+        }
+    }
+    return collision_free;
+}
+
+void MASSim::correctSingleAgent(Agent *agent) {
+    float x = agent->getX();
+    float y = agent->getY();
+    if (x < 0){
+        x = 0;
+    }
+    else if (x>size_x){
+        x = (float)size_x-0.001f;
+    }
+    if (y < 0){
+        y = 0;
+    }
+    else if (y>size_y){
+        y = (float)size_y-0.001f;
+    }
+    agent->correctPose(x, y);
+//    grid.assignAgent(agent);
 }
 

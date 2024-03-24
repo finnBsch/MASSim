@@ -7,10 +7,9 @@
 #include <eigen3/Eigen/Dense>
 
 struct AgentConfig {
-    float dt = 0.02f; // s
     float speed = 5.0f; // m/s
     int fov_angle = 360;
-    float perception_radius = 4.0f;
+    float perception_radius = 6.0f;
     float body_radius = 0.04f;
 };
 
@@ -20,14 +19,16 @@ struct AgentVizConfig {
 
 class Agent{
 protected:
+    int grid_id_x = -1;
+    int grid_id_y = -1;
     AgentConfig config;
     AgentVizConfig viz_config;
 
     Agent* chosen_agent_A;
     Agent* chosen_agent_B;
     //
-    Eigen::Matrix<float, 3, 1> pose; // x/y/yaw
-    Eigen::Matrix<float, 3, 1> motion_input;
+    Eigen::Matrix<float, 2, 1> pose; // x/y/yaw
+    Eigen::Matrix<float, 2, 1> velocity;
     // Perception
     const std::vector<Agent*>* agents;
 
@@ -40,19 +41,25 @@ public:
     Agent(const std::vector<Agent*>* agents, AgentConfig config);
     Agent(const std::vector<Agent*>* agents);
     virtual void calculateMotion() = 0;
-    void step();
+    void step(float dt);
 
     // Runtime methods
     void pickAgents();
-    const Eigen::Matrix<float, 3, 1>& getPose() const;
+    const Eigen::Matrix<float, 2, 1>& getPose() const;
+    const Eigen::Matrix<float, 2, 1>& getVelocity() const;
     void reset(float x_max, float y_max);
     void correctPose(float x, float y);
+    void correctPose(Eigen::Matrix<float, 2, 1> pose);
+    void setVelocity(Eigen::Matrix<float, 2, 1> velocity);
 
     // Param get set
     float getRadius();
     float getX();
     float getY();
+    int getGridX();
+    int getGridY();
     void setSpeed(float speed);
+    void setGridId(int idx, int idy);
 };
 
 #endif //MASSIM_AGENT_H
