@@ -51,9 +51,17 @@
         ctx.canvas.width  = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
         const ratio = window.innerWidth/window.innerHeight;
-        const sim = new Module.MASSim(200, 15, 15/ratio);
+        var f1 = 1;
+        var f2 = 1;
+        if (ratio > 1){
+            f2 = 1/ratio;
+        }
+        else {
+            f1 = ratio;
+        }
+        const sim = new Module.MASSim(200, 15*f1, 15*f2);
         ctx.beginPath();
-        ctx.setTransform(window.innerWidth/15, 0, 0, window.innerHeight/15*ratio, 0, 0);
+        ctx.setTransform(window.innerWidth/15/f1, 0, 0, window.innerHeight/15/f2, 0, 0);
 
         // canvas.width = 1000;
         // canvas.height = 1000;
