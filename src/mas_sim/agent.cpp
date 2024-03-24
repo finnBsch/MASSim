@@ -2,32 +2,32 @@
 // Created by finn on 3/15/24.
 //
 #include <random>
+#include <iostream>
 #include "mas_sim/agent.h"
 
-void Agent::pickAgents() {
+void Agent::pickAgents(std::vector<Agent*>& agents) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distr(0, agents->size()-1);
+    std::uniform_int_distribution<> distr(0, agents.size()-1);
     int id_0 = distr(gen);
-    while (agents->at(id_0) == this){
+    while (agents.at(id_0) == this){
         id_0 = distr(gen);
     }
     int id_1 = distr(gen);
-    while (agents->at(id_1) == this || id_1 == id_0){
+    while (agents.at(id_1) == this || id_1 == id_0){
         id_1 = distr(gen);
     }
-    chosen_agent_A = agents->at(id_0);
-    chosen_agent_B = agents->at(id_1);
+    chosen_agent_A = agents.at(id_0);
+    chosen_agent_B = agents.at(id_1);
 }
 
-Agent::Agent(const std::vector<Agent *>* agents, AgentConfig config):
-    Agent(agents) {
+Agent::Agent(AgentConfig config):
+    Agent() {
     this->config = config;
 }
 
-Agent::Agent(const std::vector<Agent *>* agents)
+Agent::Agent()
 {
-    this->agents = agents;
 
 }
 

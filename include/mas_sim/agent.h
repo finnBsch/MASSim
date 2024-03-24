@@ -30,7 +30,6 @@ protected:
     Eigen::Matrix<float, 2, 1> pose; // x/y/yaw
     Eigen::Matrix<float, 2, 1> velocity;
     // Perception
-    const std::vector<Agent*>* agents;
 
 
 
@@ -38,13 +37,13 @@ protected:
     bool inView(Agent* agent, bool fov_check=false);
 
 public:
-    Agent(const std::vector<Agent*>* agents, AgentConfig config);
-    Agent(const std::vector<Agent*>* agents);
+    Agent(AgentConfig config);
+    Agent();
     virtual void calculateMotion() = 0;
     void step(float dt);
 
     // Runtime methods
-    void pickAgents();
+    void pickAgents(std::vector<Agent*>& agents);
     const Eigen::Matrix<float, 2, 1>& getPose() const;
     const Eigen::Matrix<float, 2, 1>& getVelocity() const;
     void reset(float x_max, float y_max);

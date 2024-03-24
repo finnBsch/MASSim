@@ -7,20 +7,27 @@
 #include <iostream>
 
 #include <chrono>
+#include <random>
+
 using namespace std::chrono;
 
-
+template <typename T>
+void remove_at(std::vector<T>& v, typename std::vector<T>::size_type n)
+{
+    std::swap(v[n], v.back());
+    v.pop_back();
+}
 
 MASSim::MASSim(int n_agents, float size_x, float size_y): n_agents(n_agents), agents(),
                                                           size_x(size_x), size_y(size_y),
                                                           toCheck()
 {
     for(int i = 0; i < n_agents; i++){
-        agents.push_back(new AgentA(&agents, AgentConfig()));
+        agents.push_back(new AgentA(AgentConfig()));
         agents.back()->reset(size_x, size_y);
     }
     for(auto agent: agents){
-        agent->pickAgents();
+        agent->pickAgents(agents);
     }
 //    std::vector<std::array<int, 2>> agent_pairs;
     for(int i = 0; i < n_agents; i++){
@@ -136,10 +143,7 @@ bool MASSim::correctAgentPairs() {
                 auto pose1 = agents[i]->getPose();
                 auto pose2 = agents[j]->getPose();
                 if (abs(pose1(0) - pose2(0)) < col_distance && abs(pose1(1) - pose2(1)) < col_distance) {
-
-
                     auto delta = pose2 - pose1;
-
                     double d = delta.norm();
                     if (d < col_distance && d > 0.0001) {
                         auto vel1 = agents[i]->getVelocity();
@@ -147,7 +151,7 @@ bool MASSim::correctAgentPairs() {
                         auto delta_speed = vel2 - vel1;
                         auto col_normal = delta / d;
                         float constraint_speed = col_normal.dot(delta_speed);
-                        double difference = col_distance - d + 0.0001f;
+                        double difference = col_distance - d + 0.001f;
                         // Correct the position such that the distance is collision_radius
                         pose1 -= difference * col_normal * 0.5;
                         pose2 += difference * col_normal * 0.5;
@@ -184,11 +188,11 @@ std::vector<std::array<float, 2>> MASSim::getAgents() {
 
 void MASSim::reset() {
     for(int i = 0; i < n_agents; i++){
-        agents[i]->reset(10.0f, 10.0f);
+        agents[i]->reset(size_x, size_y);
         correctSingleAgent(agents[i]);
     }
     for(auto& agent: agents){
-        agent->pickAgents();
+        agent->pickAgents(agents);
     }
 }
 
@@ -289,5 +293,27 @@ void MASSim::correctSingleAgent(Agent *agent) {
     }
     agent->correctPose(x, y);
 //    grid.assignAgent(agent);
+}
+
+void MASSim::setNumAgents(int num_agents) {
+    if(num_agents == n_agents){
+        return;
+    }
+    static std::random_device rd; // obtain a random number from hardware
+    static std::mt19937 gen(rd()); // seed the generator
+    if(num_agents > n_agents){
+        while(num_agents > n_agents){
+            agents.push_back(new AgentA(AgentConfig())); // TODO Merge config
+            agents.back()->reset(size_x, size_y);
+            n_agents++;
+        }
+    }
+    else{
+        agents.erase(agents.begin() + num_agents, agents.end());
+        n_agents = num_agents;
+    }
+    for(auto agent: agents){
+        agent->pickAgents(agents);
+    }
 }
 

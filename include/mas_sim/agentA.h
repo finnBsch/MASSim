@@ -8,8 +8,8 @@
 
 class AgentA: public Agent {
 public:
-    AgentA(const std::vector<Agent*>* agents, AgentConfig config);
-    AgentA(const std::vector<Agent*>* agents);
+    AgentA( AgentConfig config);
+    AgentA();
     void calculateMotion() override;
 };
 #endif //MASSIM_AGENTA_H

@@ -71,11 +71,11 @@ void AgentA::calculateMotion() {
     }
 }
 
-AgentA::AgentA(const std::vector<Agent *> *agents, AgentConfig config) : Agent(agents, config)
+AgentA::AgentA(AgentConfig config) : Agent( config)
 {
 
 }
 
-AgentA::AgentA(const std::vector<Agent *> *agents) : Agent(agents) {
+AgentA::AgentA() : Agent() {
 
 }
