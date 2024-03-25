@@ -40,6 +40,7 @@
                 <span id="elasticityIndicator" class="slider-indicator">200</span>
                 <span id="elasticity-warning">Warning: Too large elasticity values might cause instabilities.</span>
             </div>
+
             <div>
                 <button id="resetBtn">Reset</button>
             </div>
@@ -48,6 +49,10 @@
             <p>Click the "Reset" button to reset the simulation.</p>
             <p>Adjust the sliders to change the simulation parameters.</p>
             <p>Click to focus an agent.</p>
+        </div>
+        <div class="performance_container">
+            <span id="compute">0 ms</span>
+            <span id="display">0 ms</span>
         </div>
     </div>
 </div>
@@ -64,6 +69,8 @@
         const numAgentsIndicator = document.getElementById('numAgentsIndicator');
         const perceptionIndicator = document.getElementById('perceptionIndicator');
         const elasticityIndicator = document.getElementById('elasticityIndicator');
+        const computeIndicator = document.getElementById('compute');
+        const dispIndicator = document.getElementById('display');
         var agent_id_center = -1;
         var agent1 = -1;
         var agent2 = -1;
@@ -159,6 +166,7 @@
             return result;
         }
         function drawAgents() {
+            const t = performance.now();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             // ctx.setTransform(100, 0, 0, 100, 0, 0);
             const nagents= sim.nAgents();
@@ -203,15 +211,17 @@
             ctx.fillStyle = "#1c1c1c";
             ctx.strokeStyle = "#1c1c1c";
             // console.log(performance.now())
+            dispIndicator.textContent = "Visualization time: " + ((performance.now() - t)).toFixed(1) + " ms";
             animationId = requestAnimationFrame(drawAgents);
         }
         function updateSimulation() {
             // var pos = getMousePos(canvas, evt);
 
-            // var t = performance.now();
+            const t = performance.now();
             sim.step();
             // console.log(performance.now() - t);
             agents = sim.getAgents();
+            computeIndicator.textContent = "Simulation time: " + ((performance.now() - t)).toFixed(1) + " ms";
             // console.log(performance.now() - t);
             // console.log("---")
             setTimeout(updateSimulation, 20);
