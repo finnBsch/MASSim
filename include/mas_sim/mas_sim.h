@@ -40,6 +40,7 @@ public:
     void setSpeed(float speed);
     void setPerceptionRadius(float radius);
     void setNumAgents(int num_agents);
+    std::array<int, 3> getFocusAgent(float x, float y);
 
 };
 

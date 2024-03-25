@@ -25,8 +25,6 @@ protected:
     AgentConfig config;
     AgentVizConfig viz_config;
 
-    Agent* chosen_agent_A;
-    Agent* chosen_agent_B;
     //
     Eigen::Matrix<float, 2, 1> pose; // x/y/yaw
     Eigen::Matrix<float, 2, 1> velocity;
@@ -62,6 +60,9 @@ public:
     void setSpeed(float speed);
     void setPerceptionRadius(float radius);
     void setGridId(int idx, int idy);
+
+    Agent* chosen_agent_A;
+    Agent* chosen_agent_B;
 };
 
 #endif //MASSIM_AGENT_H

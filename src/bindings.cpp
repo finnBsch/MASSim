@@ -12,6 +12,11 @@ EMSCRIPTEN_BINDINGS(my_module){
             .element(emscripten::index<0>())
             .element(emscripten::index<1>())
             ;
+        value_array<std::array<int, 3>>("array_int_3")
+            .element(emscripten::index<0>())
+            .element(emscripten::index<1>())
+            .element(emscripten::index<2>())
+            ;
 //        class_<Agent>("Agent")
 //                .function("getX", &Agent::getX)
 //                .function("getY", &Agent::getY);
@@ -31,6 +36,7 @@ EMSCRIPTEN_BINDINGS(my_module){
                 .function("setSpeed", &MASSim::setSpeed)
                 .function("setPerceptionRadius", &MASSim::setPerceptionRadius)
                 .function("setNumAgents", &MASSim::setNumAgents)
+                .function("getFocusAgent", &MASSim::getFocusAgent)
                 ;
 //                .function("incrementX", &MyClass::incrementX)
 //                .property("x", &MyClass::getX, &MyClass::setX)

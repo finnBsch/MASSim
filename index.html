@@ -23,8 +23,8 @@
         </div>
         <div style="text-align: right; display: flex; align-items: center;">
             <label for="perception">Perception Radius:</label>
-            <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.2">
-            <span id="perceptionIndicator">0.2</span>
+            <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.05">
+<!--            <span id="perceptionIndicator">0.2</span>-->
         </div>
         <div style="text-align: right; display: flex; align-items: center;">
             <label for="numAgents">Number of Agents:</label>
@@ -53,8 +53,10 @@
         var nASlider = document.getElementById('numAgents');
         const speedIndicator = document.getElementById('speedIndicator');
         const numAgentsIndicator = document.getElementById('numAgentsIndicator');
-        const perceptionIndicator = document.getElementById('perceptionIndicator');
-
+        // const perceptionIndicator = document.getElementById('perceptionIndicator');
+        var agent_id_center = -1;
+        var agent1 = -1;
+        var agent2 = -1;
         speedSlider.oninput = function() {
             setSpeed(this.value);
         }
@@ -64,6 +66,37 @@
         perceptionSlider.oninput = function() {
             setPerceptionRadius(this.value)
         }
+        function getWindowToCanvas(canvas, x, y) {
+            var rect = canvas.getBoundingClientRect();
+            var screenX = (x - rect.left) * (canvas.width / rect.width);
+            var screenY = (y - rect.top) * (canvas.height / rect.height);
+            const ctx = canvas.getContext("2d");
+            var transform = ctx.getTransform();
+            if (transform.isIdentity) {
+                return {
+                    x: screenX,
+                    y: screenY
+                };
+            } else {
+                //   console.log(transform.invertSelf()); //don't invert twice!!
+                const invMat = transform.invertSelf();
+
+                return {
+                    x: (screenX * invMat.a + screenY * invMat.c + invMat.e),
+                    y: (screenX * invMat.b + screenY * invMat.d + invMat.f)
+                };
+            }
+        }
+        mousePos = {x: 0.0, y: 0.0};
+        canvas.addEventListener('mousedown', function(event) {
+            var x = event.pageX - canvas.offsetLeft
+            var y = event.pageY - canvas.offsetTop;
+            mousePos = getWindowToCanvas(canvas, x, y);
+            const ids = sim.getFocusAgent(mousePos.x, mousePos.y);
+            agent_id_center = ids[0];
+            agent1 = ids[1];
+            agent2 = ids[2];
+        })
         const ctx = canvas.getContext('2d');
         ctx.canvas.width  = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
@@ -109,18 +142,44 @@
             // ctx.setTransform(100, 0, 0, 100, 0, 0);
             const nagents= sim.nAgents();
             for (let i = 0; i < nagents; i++) {
+                if (agent_id_center != -1){
+                    ctx.fillStyle = "#e5e5e5";
+                    ctx.strokeStyle = "#1c1c1c";
+                }
+                else {
+                    ctx.fillStyle = "#1c1c1c";
+                    ctx.strokeStyle = "#1c1c1c";
+                }
+
                 const agent = agents.get(i);
                 // alert(getMethods(agent).join("\n"));
 
                 ctx.beginPath();
                 ctx.arc(agent[0], agent[1], .04, 0, 2 * Math.PI);
-                ctx.fillStyle = agent.color;
+                if (i == agent_id_center){
+                    ctx.fillStyle = "#d72525"; //blue
+                }
+                else if (i == agent1 || i == agent2){
+                    ctx.fillStyle = "#3c9156";
+                }
                 ctx.fill();
             }
+            if (agent_id_center != -1){
+                const agent = agents.get(agent_id_center);
+                ctx.beginPath();
+                ctx.arc(agent[0], agent[1], perceptionSlider.value, 0, 2 * Math.PI);
+                ctx.strokeStyle = "#a8a8a8";
+                ctx.lineWidth = 0.01;
+                ctx.stroke();
+            }
+            ctx.fillStyle = "#1c1c1c";
+            ctx.strokeStyle = "#1c1c1c";
             // console.log(performance.now())
             animationId = requestAnimationFrame(drawAgents);
         }
         function updateSimulation() {
+            // var pos = getMousePos(canvas, evt);
+
             // var t = performance.now();
             sim.step();
             // console.log(performance.now() - t);
@@ -131,7 +190,9 @@
         }
 
         function resetSimulation() {
-
+            agent_id_center = -1;
+            agent1 = -1;
+            agent2 = -1;
             // cancelAnimationFrame(animationId);
             sim.reset();
             // agents = sim.getAgents();
@@ -144,10 +205,13 @@
         }
         function setPerceptionRadius(radius){
             sim.setPerceptionRadius(radius);
-            perceptionIndicator.textContent = radius;
+            // perceptionIndicator.textContent = radius;
             // console.log(speed.value);
         }
         function setNumAgents(input){
+            agent_id_center = -1;
+            agent1 = -1;
+            agent2 = -1;
             sim.setNumAgents(input);
             agents = sim.getAgents();
             numAgentsIndicator.textContent = input;

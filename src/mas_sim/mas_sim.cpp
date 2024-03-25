@@ -325,3 +325,17 @@ void MASSim::setPerceptionRadius(float radius) {
     }
 }
 
+std::array<int, 3> MASSim::getFocusAgent(float x, float y) {
+    for (int i = 0; i < agents.size(); i++){
+        auto agent = agents[i];
+        if (abs(x - agent->getX()) < agent->getRadius() && abs(y - agent->getY()) < agent->getRadius() ){
+            auto it = find(agents.begin(), agents.end(), agent->chosen_agent_A);
+            int id0 = it - agents.begin();
+            it = find(agents.begin(), agents.end(), agent->chosen_agent_B);
+            int id1 = it - agents.begin();
+            return std::array<int, 3>{i, id0, id1};
+        }
+    }
+    return std::array<int, 3>{-1, -1, -1};
+}
+
