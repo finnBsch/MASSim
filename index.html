@@ -15,31 +15,28 @@
 <!--</script>-->
 <div id="container">
     <canvas id="simulationCanvas"></canvas>
-    <div id="controls">
-        <div style="text-align: right; display: flex; align-items: center;">
-            <label for="speed">Speed:</label>
-            <input type="range" id="speed" min="1" max="20" value="10">
-            <span id="speedIndicator">10</span>
-        </div>
-        <div style="text-align: right; display: flex; align-items: center;">
-            <label for="perception">Perception Radius:</label>
-            <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.05">
-<!--            <span id="perceptionIndicator">0.2</span>-->
-        </div>
-        <div style="text-align: right; display: flex; align-items: center;">
-            <label for="numAgents">Number of Agents:</label>
-            <input type="range" id="numAgents" min="100" max="500" value="200" step="100" list="tickmarks">
-            <datalist id="tickmarks">
-                <option value="100" label="100"></option>
-                <option value="200"></option>
-                <option value="300"></option>
-                <option value="400"></option>
-                <option value="500" label="500"></option>
-            </datalist>
-            <span id="numAgentsIndicator">200</span>
-        </div>
-        <div style="text-align: right;">
-            <button id="resetBtn">Reset</button>
+    <div id="controls-container">
+        <div id="controls">
+<!--            <div id="controls_title">Parameters</div>-->
+            <div class="slider-container">
+                <label for="speed" class="slider-label">Speed</label>
+                <input type="range" id="speed" min="1" max="20" value="10">
+                <span id="speedIndicator" class="slider-indicator">10</span>
+            </div>
+            <div class="slider-container">
+                <label for="perception" class="slider-label">Perception Radius</label>
+                <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.01">
+                <span id="perceptionIndicator" class="slider-indicator">0.2</span>
+
+            </div>
+            <div class="slider-container">
+                <label for="numAgents" class="slider-label">Number of Agents</label>
+                <input type="range" id="numAgents" min="10" max="1000" value="200" step="10">
+                <span id="numAgentsIndicator" class="slider-indicator">200</span>
+            </div>
+            <div>
+                <button id="resetBtn">Reset</button>
+            </div>
         </div>
     </div>
 </div>
@@ -53,10 +50,11 @@
         var nASlider = document.getElementById('numAgents');
         const speedIndicator = document.getElementById('speedIndicator');
         const numAgentsIndicator = document.getElementById('numAgentsIndicator');
-        // const perceptionIndicator = document.getElementById('perceptionIndicator');
+        const perceptionIndicator = document.getElementById('perceptionIndicator');
         var agent_id_center = -1;
         var agent1 = -1;
         var agent2 = -1;
+        var showP = false
         speedSlider.oninput = function() {
             setSpeed(this.value);
         }
@@ -65,6 +63,12 @@
         }
         perceptionSlider.oninput = function() {
             setPerceptionRadius(this.value)
+        }
+        perceptionSlider.onmousedown = function(){
+            showP  = true;
+        }
+        perceptionSlider.onmouseup = function(){
+            showP  = false;
         }
         function getWindowToCanvas(canvas, x, y) {
             var rect = canvas.getBoundingClientRect();
@@ -163,6 +167,13 @@
                     ctx.fillStyle = "#3c9156";
                 }
                 ctx.fill();
+                if (showP){
+                    ctx.beginPath();
+                    ctx.arc(agent[0], agent[1], perceptionSlider.value, 0, 2 * Math.PI);
+                    ctx.strokeStyle = "#d0d0d0";
+                    ctx.lineWidth = 0.01;
+                    ctx.stroke();
+                }
             }
             if (agent_id_center != -1){
                 const agent = agents.get(agent_id_center);
@@ -205,7 +216,7 @@
         }
         function setPerceptionRadius(radius){
             sim.setPerceptionRadius(radius);
-            // perceptionIndicator.textContent = radius;
+            perceptionIndicator.textContent = radius;
             // console.log(speed.value);
         }
         function setNumAgents(input){
