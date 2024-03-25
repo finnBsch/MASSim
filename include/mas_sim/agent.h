@@ -8,6 +8,7 @@
 
 struct AgentConfig {
     float speed = 5.0f; // m/s
+    float accel = 1.0f;
     int fov_angle = 360;
     float perception_radius = 6.0f;
     float body_radius = 0.04f;
@@ -29,6 +30,7 @@ protected:
     //
     Eigen::Matrix<float, 2, 1> pose; // x/y/yaw
     Eigen::Matrix<float, 2, 1> velocity;
+    Eigen::Matrix<float, 2, 1> acceleration;
     // Perception
 
 
@@ -58,6 +60,7 @@ public:
     int getGridX();
     int getGridY();
     void setSpeed(float speed);
+    void setPerceptionRadius(float radius);
     void setGridId(int idx, int idy);
 };
 

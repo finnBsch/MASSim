@@ -21,8 +21,8 @@ void AgentA::calculateMotion() {
         static std::uniform_real_distribution<float> distr(0, 2*(float)M_PI);
         float angle = distr(gen);
 
-        velocity(0, 0) = cosf(angle) * config.speed;
-        velocity(1, 0) = sinf(angle) * config.speed;
+        acceleration(0, 0) = cosf(angle) * config.accel;
+        acceleration(1, 0) = sinf(angle) * config.accel;
 //        static std::uniform_real_distribution<float> distr(-10*M_PI/180, 10 * M_PI/180);
 //        float angle = distr(gen);
 //        pose(2, 0) += angle;
@@ -40,7 +40,7 @@ void AgentA::calculateMotion() {
             dir = dir / sqrtf(norm_2);
         }
 //        std::cout << norm_2 << std::endl;
-        velocity = dir * config.speed;
+        acceleration = dir * config.accel;
 
     }
     else if((!inViewB)){
@@ -67,7 +67,7 @@ void AgentA::calculateMotion() {
             movement_dir = movement_dir / sqrtf(norm_2);
         }
 //        std::cout << norm_2 << std::endl;
-        velocity = movement_dir *  config.speed;
+        acceleration = movement_dir * config.accel;
     }
 }
 

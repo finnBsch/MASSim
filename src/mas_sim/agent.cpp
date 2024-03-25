@@ -60,12 +60,14 @@ void Agent::reset(float x_max, float y_max) {
     static std::uniform_real_distribution<float> distr_y(0, y_max);
     pose(0, 0) = distr_x(gen);
     pose(1, 0) = distr_y(gen);
+    acceleration.setZero();
     grid_id_x = -1;
     grid_id_y = -1;
 }
 
 void Agent::step(float dt) {
-    pose = pose + velocity*dt;
+    velocity = velocity + acceleration * dt - velocity*0.8 * dt;
+    pose = pose + velocity*dt * config.speed;
 }
 
 void Agent::correctPose(float x, float y) {
@@ -112,4 +114,8 @@ void Agent::correctPose(Eigen::Matrix<float, 2, 1> pose) {
 
 const Eigen::Matrix<float, 2, 1> &Agent::getVelocity() const {
     return velocity;
+}
+
+void Agent::setPerceptionRadius(float radius) {
+    config.perception_radius = radius;
 }

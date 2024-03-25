@@ -12,6 +12,7 @@
 #include <queue>
 class MASSim{
 private:
+    AgentConfig defaultConf;
     int sub_steps=16;
     std::vector<std::array<int, 2>> agent_pairs;
     Grid grid;
@@ -37,6 +38,7 @@ public:
     MASSim(int n_agents, float size_x, float size_y);
     // API
     void setSpeed(float speed);
+    void setPerceptionRadius(float radius);
     void setNumAgents(int num_agents);
 
 };

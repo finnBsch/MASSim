@@ -29,6 +29,7 @@ EMSCRIPTEN_BINDINGS(my_module){
 //                .function("getAgentsDirect", &MASSim::getAgentsDirect)
                 .function("reset", &MASSim::reset)
                 .function("setSpeed", &MASSim::setSpeed)
+                .function("setPerceptionRadius", &MASSim::setPerceptionRadius)
                 .function("setNumAgents", &MASSim::setNumAgents)
                 ;
 //                .function("incrementX", &MyClass::incrementX)

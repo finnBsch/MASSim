@@ -159,7 +159,7 @@ bool MASSim::correctAgentPairs() {
                         required_correction = true;
                         agents[i]->correctPose(pose1);
                         agents[j]->correctPose(pose2);
-                        auto impulse = col_normal * (-constraint_speed * (1.0f + 0.25f));
+                        auto impulse = col_normal * (-constraint_speed * (1.0f + 0.6f));
                         agents[i]->setVelocity(vel1 - impulse * 0.5f);
                         agents[j]->setVelocity(vel2 + impulse * 0.5f);
                         correctSingleAgent(agents[i]);
@@ -201,6 +201,7 @@ std::vector<Agent *> MASSim::getAgentsDirect() {
 }
 
 void MASSim::setSpeed(float speed) {
+    defaultConf.speed = speed;
     for (auto& agent:agents){
         agent->setSpeed(speed);
     }
@@ -303,7 +304,7 @@ void MASSim::setNumAgents(int num_agents) {
     static std::mt19937 gen(rd()); // seed the generator
     if(num_agents > n_agents){
         while(num_agents > n_agents){
-            agents.push_back(new AgentA(AgentConfig())); // TODO Merge config
+            agents.push_back(new AgentA(defaultConf)); // TODO Merge config
             agents.back()->reset(size_x, size_y);
             n_agents++;
         }
@@ -314,6 +315,13 @@ void MASSim::setNumAgents(int num_agents) {
     }
     for(auto agent: agents){
         agent->pickAgents(agents);
+    }
+}
+
+void MASSim::setPerceptionRadius(float radius) {
+    defaultConf.perception_radius = radius;
+    for (auto& agent:agents){
+        agent->setPerceptionRadius(radius);
     }
 }
 
