@@ -61,6 +61,7 @@ void Agent::reset(float x_max, float y_max) {
     pose(0, 0) = distr_x(gen);
     pose(1, 0) = distr_y(gen);
     acceleration.setZero();
+    velocity.setZero();
     grid_id_x = -1;
     grid_id_y = -1;
 }

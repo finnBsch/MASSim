@@ -126,3 +126,16 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
 #tips p {
     margin: 5px 0;
 }
+
+#elasticity-warning{
+    display: none; /* initially hide the warning */
+    font-size: 12px;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    margin-top: 5px;
+}
+
+#elasticity-warning.show {
+    display: block; /* show the warning when the class 'show' is added */
+}

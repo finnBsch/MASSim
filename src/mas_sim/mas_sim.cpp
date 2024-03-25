@@ -159,7 +159,7 @@ bool MASSim::correctAgentPairs() {
                         required_correction = true;
                         agents[i]->correctPose(pose1);
                         agents[j]->correctPose(pose2);
-                        auto impulse = col_normal * (-constraint_speed * (1.0f + 0.6f));
+                        auto impulse = col_normal * (-constraint_speed * (1.0f + elasticity));
                         agents[i]->setVelocity(vel1 - impulse * 0.5f);
                         agents[j]->setVelocity(vel2 + impulse * 0.5f);
                         correctSingleAgent(agents[i]);
@@ -337,5 +337,9 @@ std::array<int, 3> MASSim::getFocusAgent(float x, float y) {
         }
     }
     return std::array<int, 3>{-1, -1, -1};
+}
+
+void MASSim::setElasticity(float elasticity) {
+    this->elasticity = elasticity;
 }
 

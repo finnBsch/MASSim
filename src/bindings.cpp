@@ -37,6 +37,7 @@ EMSCRIPTEN_BINDINGS(my_module){
                 .function("setPerceptionRadius", &MASSim::setPerceptionRadius)
                 .function("setNumAgents", &MASSim::setNumAgents)
                 .function("getFocusAgent", &MASSim::getFocusAgent)
+                .function("setElasticity", &MASSim::setElasticity)
                 ;
 //                .function("incrementX", &MyClass::incrementX)
 //                .property("x", &MyClass::getX, &MyClass::setX)

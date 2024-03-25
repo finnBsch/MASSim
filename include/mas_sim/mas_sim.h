@@ -14,6 +14,7 @@ class MASSim{
 private:
     AgentConfig defaultConf;
     int sub_steps=16;
+    float elasticity = 0.5;
     std::vector<std::array<int, 2>> agent_pairs;
     Grid grid;
     int n_agents;
@@ -40,6 +41,7 @@ public:
     void setSpeed(float speed);
     void setPerceptionRadius(float radius);
     void setNumAgents(int num_agents);
+    void setElasticity(float elasticity);
     std::array<int, 3> getFocusAgent(float x, float y);
 
 };
