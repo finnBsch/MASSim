@@ -170,3 +170,27 @@ input[type="range"]:focus::-moz-range-track {
 #elasticity-warning.show {
     display: block; /* show the warning when the class 'show' is added */
 }
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.button-group input[type="radio"] {
+    display: none; /* Hide the actual radio buttons */
+}
+
+.button-group label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-group input[type="radio"]:checked + label {
+    background-color: #333;
+    color: #fff;
+}
