@@ -6,12 +6,19 @@
 #define MASSIM_AGENT_H
 #include <eigen3/Eigen/Dense>
 
+enum class Policy{
+    A,
+    B
+};
+
 struct AgentConfig {
     float speed = 5.0f; // m/s
     float accel = 1.0f;
     int fov_angle = 360;
     float perception_radius = 6.0f;
     float body_radius = 0.04f;
+    Policy policy;
+
 };
 
 struct AgentVizConfig {
@@ -35,11 +42,13 @@ protected:
 
     // Runtime methods
     bool inView(Agent* agent, bool fov_check=false);
+    void calculateMotionA();
+    void calculateMotionB();
 
 public:
     Agent(AgentConfig config);
     Agent();
-    virtual void calculateMotion() = 0;
+    void calculateMotion();
     void step(float dt);
 
     // Runtime methods
@@ -57,8 +66,7 @@ public:
     float getY();
     int getGridX();
     int getGridY();
-    void setSpeed(float speed);
-    void setPerceptionRadius(float radius);
+    void setConfig(AgentConfig& config);
     void setGridId(int idx, int idy);
 
     Agent* chosen_agent_A;

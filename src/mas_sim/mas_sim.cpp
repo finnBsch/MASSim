@@ -24,7 +24,7 @@ MASSim::MASSim(int n_agents, float size_x, float size_y): n_agents(n_agents), ag
                                                           toCheck()
 {
     for(int i = 0; i < n_agents; i++){
-        agents.push_back(new AgentA(AgentConfig()));
+        agents.push_back(new Agent(defaultConf));
         agents.back()->reset(size_x, size_y);
     }
     for(auto agent: agents){
@@ -204,7 +204,7 @@ std::vector<Agent *> MASSim::getAgentsDirect() {
 void MASSim::setSpeed(float speed) {
     defaultConf.speed = speed;
     for (auto& agent:agents){
-        agent->setSpeed(speed);
+        agent->setConfig(defaultConf);
     }
 
 }
@@ -281,20 +281,10 @@ bool MASSim::correctAgentGroup(Agent *agent0, GridCell * agents_group) {
 void MASSim::correctSingleAgent(Agent *agent) {
     float x = agent->getX();
     float y = agent->getY();
-    if (x < 0){
-        x = 0;
-    }
-    else if (x>size_x){
-        x = (float)size_x-0.001f;
-    }
-    if (y < 0){
-        y = 0;
-    }
-    else if (y>size_y){
-        y = (float)size_y-0.001f;
-    }
+    x = std::max(defaultConf.body_radius*2, std::min(x, size_x - defaultConf.body_radius*2));
+    y = std::max(defaultConf.body_radius*2, std::min(y, size_y - defaultConf.body_radius*2));
+
     agent->correctPose(x, y);
-//    grid.assignAgent(agent);
 }
 
 void MASSim::setNumAgents(int num_agents) {
@@ -305,7 +295,7 @@ void MASSim::setNumAgents(int num_agents) {
     static std::mt19937 gen(rd()); // seed the generator
     if(num_agents > n_agents){
         while(num_agents > n_agents){
-            agents.push_back(new AgentA(defaultConf)); // TODO Merge config
+            agents.push_back(new Agent(defaultConf)); // TODO Merge config
             agents.back()->reset(size_x, size_y);
             n_agents++;
         }
@@ -322,7 +312,7 @@ void MASSim::setNumAgents(int num_agents) {
 void MASSim::setPerceptionRadius(float radius) {
     defaultConf.perception_radius = radius;
     for (auto& agent:agents){
-        agent->setPerceptionRadius(radius);
+        agent->setConfig(defaultConf);
     }
 }
 
@@ -345,7 +335,10 @@ void MASSim::setElasticity(float elasticity) {
 }
 
 void MASSim::setPolicy1() {
-    std::cout << "Setting policy 1" << std::endl;
+    defaultConf.policy = Policy::A;
+    for (auto& agent:agents){
+        agent->setConfig(defaultConf);
+    }
     // for(int i = 0; i < n_agents; i++){
     //     agents[i]->reset(size_x, size_y);
     //     correctSingleAgent(agents[i]);
@@ -356,7 +349,10 @@ void MASSim::setPolicy1() {
 }
 
 void MASSim::setPolicy2() {
-    std::cout << "Setting policy 2" << std::endl;
+    defaultConf.policy = Policy::B;
+    for (auto& agent:agents){
+        agent->setConfig(defaultConf);
+    }
     // for(int i = 0; i < n_agents; i++){
     //     agents[i]->reset(size_x, size_y);
     //     correctSingleAgent(agents[i]);

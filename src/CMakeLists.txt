@@ -33,8 +33,6 @@ if (DEFINED EMSCRIPTEN)
             mas_sim/mas_sim.cpp
             #        viz.cpp
             mas_sim/agent.cpp
-            mas_sim/agentB.cpp
-            mas_sim/agentA.cpp
             bindings.cpp)
 #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --bind")
 #    set_target_properties(mas_sim PROPERTIES LINK_FLAGS "--bind")
@@ -49,8 +47,6 @@ else()
                 mas_sim/mas_sim.cpp
     #        viz.cpp
             mas_sim/agent.cpp
-            mas_sim/agentB.cpp
-            mas_sim/agentA.cpp
             mas_sim/grid.cpp
     )
     target_include_directories(mas_sim_lib PUBLIC ../include PRIVATE ${tomlplusplus_SOURCE_DIR}/include)

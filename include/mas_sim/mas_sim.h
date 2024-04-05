@@ -4,8 +4,6 @@
 
 #ifndef MASSIM_MAS_SIM_H
 #define MASSIM_MAS_SIM_H
-#include "agentA.h"
-#include "agentB.h"
 #include "agent.h"
 #include "vector"
 #include "grid.h"
