@@ -38,6 +38,8 @@ EMSCRIPTEN_BINDINGS(my_module){
                 .function("setNumAgents", &MASSim::setNumAgents)
                 .function("getFocusAgent", &MASSim::getFocusAgent)
                 .function("setElasticity", &MASSim::setElasticity)
+                .function("setPolicy1", &MASSim::setPolicy1)
+                .function("setPolicy2", &MASSim::setPolicy2)
                 ;
 //                .function("incrementX", &MyClass::incrementX)
 //                .property("x", &MyClass::getX, &MyClass::setX)

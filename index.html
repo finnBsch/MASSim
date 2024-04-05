@@ -44,15 +44,17 @@
             <div>
                 <button id="resetBtn">Reset</button>
             </div>
-            <div class="button-group">
-                <input type="radio" id="option1" name="options" value="option1" checked>
-                <label for="option1">Option 1</label>
-            
-                <input type="radio" id="option2" name="options" value="option2">
-                <label for="option2">Option 2</label>
-            
-                <input type="radio" id="option3" name="options" value="option3">
-                <label for="option3">Option 3</label>
+            <div class="button-group" style="margin-top: 10px;">
+                <div class="tooltip">
+                    <input type="radio" id="policy1Btn" name="options" value="policy1Btn" checked>
+                    <label for="policy1Btn">Policy 1</label>
+                    <span class="tooltiptext">Each agent selects two others (A and B) at random and tries to place itself between A and B.</span>
+                </div>
+                <div class="tooltip">
+                    <input type="radio" id="policy2Btn" name="options" value="policy2Btn">
+                    <label for="policy2Btn">Policy 2</label>
+                    <span class="tooltiptext"> Each agent selects two others (A and B) at random and tries to move such that B is between itself and A. </span>
+                </div>         
             </div>
         </div>
         <div id="tips">
@@ -246,6 +248,12 @@
             // agents = sim.getAgents();
             // updateSimulation();
         }
+        function setPolicy1() {
+            sim.setPolicy1()
+        }
+        function setPolicy2() {
+            sim.setPolicy2()
+        }
         function setSpeed(speed){
             sim.setSpeed(speed/2);
             speedIndicator.textContent = speed/2;
@@ -280,6 +288,8 @@
         animationId = requestAnimationFrame(drawAgents);
         // speedInput.addEventListener('input', setSpeed);
         resetBtn.addEventListener('click', resetSimulation);
+        policy1Btn.addEventListener('click', setPolicy1);
+        policy2Btn.addEventListener('click', setPolicy2);
         ctx.restore()
     };
 </script>

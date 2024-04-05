@@ -182,7 +182,7 @@ input[type="range"]:focus::-moz-range-track {
 
 .button-group label {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 10px 32px;
     background-color: #eee;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -193,4 +193,33 @@ input[type="range"]:focus::-moz-range-track {
 .button-group input[type="radio"]:checked + label {
     background-color: #333;
     color: #fff;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #eee;
+  color: black;
+  border-radius: 6px;
+  border-style: solid;
+  border-color: black;
+  border-width: 1.5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -90px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 0.8;
 }

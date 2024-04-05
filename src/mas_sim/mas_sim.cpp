@@ -4,6 +4,7 @@
 #include "mas_sim/mas_sim.h"
 #include "mas_sim/agent.h"
 #include "vector"
+#include "array"
 #include <iostream>
 
 #include <chrono>
@@ -343,3 +344,24 @@ void MASSim::setElasticity(float elasticity) {
     this->elasticity = elasticity;
 }
 
+void MASSim::setPolicy1() {
+    std::cout << "Setting policy 1" << std::endl;
+    // for(int i = 0; i < n_agents; i++){
+    //     agents[i]->reset(size_x, size_y);
+    //     correctSingleAgent(agents[i]);
+    // }
+    // for(auto& agent: agents){
+    //     agent->pickAgents(agents);
+    // }
+}
+
+void MASSim::setPolicy2() {
+    std::cout << "Setting policy 2" << std::endl;
+    // for(int i = 0; i < n_agents; i++){
+    //     agents[i]->reset(size_x, size_y);
+    //     correctSingleAgent(agents[i]);
+    // }
+    // for(auto& agent: agents){
+    //     agent->pickAgents(agents);
+    // }
+}

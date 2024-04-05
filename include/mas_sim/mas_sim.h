@@ -43,7 +43,8 @@ public:
     void setNumAgents(int num_agents);
     void setElasticity(float elasticity);
     std::array<int, 3> getFocusAgent(float x, float y);
-
+    void setPolicy1();
+    void setPolicy2();
 };
 
 #endif //MASSIM_MAS_SIM_H
