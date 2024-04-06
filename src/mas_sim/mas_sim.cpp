@@ -281,8 +281,44 @@ bool MASSim::correctAgentGroup(Agent *agent0, GridCell * agents_group) {
 void MASSim::correctSingleAgent(Agent *agent) {
     float x = agent->getX();
     float y = agent->getY();
-    x = std::max(defaultConf.body_radius*2, std::min(x, size_x - defaultConf.body_radius*2));
-    y = std::max(defaultConf.body_radius*2, std::min(y, size_y - defaultConf.body_radius*2));
+    if (x < defaultConf.body_radius){
+        auto vel = agent->getVelocity();
+        x = defaultConf.body_radius;
+        agent->correctPose(x, y);
+        auto impulse = -vel[0] * (1.0f + elasticity);
+        Eigen::Vector2f new_vel = vel;
+        new_vel[0] += impulse;
+        agent->setVelocity(new_vel);
+    }
+    else if (x > size_x - defaultConf.body_radius){
+        auto vel = agent->getVelocity();
+        x = size_x - defaultConf.body_radius;
+        agent->correctPose(x, y);
+        auto impulse = -vel[0] * (1.0f + elasticity);
+        Eigen::Vector2f new_vel = vel;
+        new_vel[0] += impulse;
+        agent->setVelocity(new_vel);
+    }
+    if (y < defaultConf.body_radius){
+        auto vel = agent->getVelocity();
+        y = defaultConf.body_radius;
+        agent->correctPose(x, y);
+        auto impulse = -vel[1] * (1.0f + elasticity);
+        Eigen::Vector2f new_vel = vel;
+        new_vel[1] += impulse;
+        agent->setVelocity(new_vel);
+    }
+    else if (y > size_y - defaultConf.body_radius){
+        auto vel = agent->getVelocity();
+        y = size_y - defaultConf.body_radius;
+        agent->correctPose(x, y);
+        auto impulse = -vel[1] * (1.0f + elasticity);
+        Eigen::Vector2f new_vel = vel;
+        new_vel[1] += impulse;
+        agent->setVelocity(new_vel);
+    }
+//    x = std::max(defaultConf.body_radius*2, std::min(x, size_x - defaultConf.body_radius*2));
+//    y = std::max(defaultConf.body_radius*2, std::min(y, size_y - defaultConf.body_radius*2));
 
     agent->correctPose(x, y);
 }
