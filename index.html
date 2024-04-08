@@ -71,6 +71,8 @@
 <script src="mas_sim.js"></script>
 <script>
     Module.onRuntimeInitialized = _ => {
+        const mindist_hsv = [4, 78, 92]
+        const maxdist_hsv = [4, 0, 11]
         // console.log(sim.nAgents()); // prints 22
         const canvas = document.getElementById('simulationCanvas');
         var speedSlider = document.getElementById('speed');
@@ -148,6 +150,7 @@
         else {
             f1 = ratio;
         }
+        const max_dist = Math.sqrt(Math.pow(15*f1, 2) + Math.pow(15*f2, 2));
         const sim = new Module.MASSim(200, 15*f1, 15*f2);
         ctx.beginPath();
         ctx.setTransform(window.innerWidth/15/f1, 0, 0, window.innerHeight/15/f2, 0, 0);
@@ -188,14 +191,26 @@
                     ctx.strokeStyle = "#1c1c1c";
                 }
                 else {
-                    ctx.fillStyle = "#1c1c1c";
-                    ctx.strokeStyle = "#1c1c1c";
+                    const distance = agent[2];
+                    var color;
+                    if (distance == -1){
+                        color = maxdist_hsv;
+                    }
+                    else {
+                        color = [0, 0, 0]
+                        color[1] = (maxdist_hsv[1] - mindist_hsv[1])/max_dist * distance + mindist_hsv[1];
+                        color[2] = (maxdist_hsv[2] - mindist_hsv[2])/max_dist * distance + mindist_hsv[2];
+                    }
+                    const fillcolor_string =  'hsl('+ color[0] +',' + Math.round(color[1]) + '%,' + Math.round(color[2]) + '%)';
+                    ctx.fillStyle = fillcolor_string;
+                    ctx.strokeStyle = fillcolor_string;
                 }
 
                 const agent = agents.get(i);
                 // alert(getMethods(agent).join("\n"));
 
                 ctx.beginPath();
+
                 ctx.arc(agent[0], agent[1], .04, 0, 2 * Math.PI);
                 if (i == agent_id_center){
                     ctx.fillStyle = "#d72525"; //blue
