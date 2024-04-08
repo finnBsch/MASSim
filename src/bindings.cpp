@@ -12,6 +12,11 @@ EMSCRIPTEN_BINDINGS(my_module){
             .element(emscripten::index<0>())
             .element(emscripten::index<1>())
             ;
+        value_array<std::array<float, 3>>("array_float_3")
+            .element(emscripten::index<0>())
+            .element(emscripten::index<1>())
+            .element(emscripten::index<2>())
+            ;
         value_array<std::array<int, 3>>("array_int_3")
             .element(emscripten::index<0>())
             .element(emscripten::index<1>())
@@ -24,6 +29,7 @@ EMSCRIPTEN_BINDINGS(my_module){
 //            .field("x", &Agent::getX)
 //            .field("y", &Agent::getY);
         register_vector<std::array<float, 2>>("ArrayVec");
+        register_vector<std::array<float, 3>>("ArrayVec3");
 //        register_vector<Agent*>("AgentVec");
         class_<MASSim>("MASSim")
 //                .constructor<int>()

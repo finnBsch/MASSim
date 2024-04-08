@@ -148,7 +148,7 @@ void Agent::calculateMotionA()
         }
 //        std::cout << norm_2 << std::endl;
         acceleration = dir * config.accel;
-        distance_to_goal = norm_2;
+        distance_to_goal = -1;
     }
     else {
         // Need to find distance to connecting vector of the other two agents
@@ -174,7 +174,7 @@ void Agent::calculateMotionA()
 //        std::cout << norm_2 << std::endl;
         acceleration = movement_dir * config.accel;
 
-        distance_to_goal = norm_2;
+        distance_to_goal = sqrtf(norm_2);
     }
 }
 void Agent::calculateMotionB()
@@ -213,7 +213,7 @@ void Agent::calculateMotionB()
                 dir = dir / sqrtf(norm_2);
             }
             acceleration = dir * config.accel;
-            distance_to_goal = norm_2;
+            distance_to_goal = -1;
         }
     }
     else {
@@ -231,7 +231,7 @@ void Agent::calculateMotionB()
         }
 //        std::cout << norm_2 << std::endl;
         acceleration = movement_dir * config.accel;
-        distance_to_goal = norm_2;
+        distance_to_goal = sqrtf(norm_2);
     }
 }
 void Agent::calculateMotion()

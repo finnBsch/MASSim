@@ -71,7 +71,7 @@
 <script src="mas_sim.js"></script>
 <script>
     Module.onRuntimeInitialized = _ => {
-        const mindist_hsv = [4, 78, 92]
+        const mindist_hsv = [4, 78, 30]
         const maxdist_hsv = [4, 0, 11]
         // console.log(sim.nAgents()); // prints 22
         const canvas = document.getElementById('simulationCanvas');
@@ -186,6 +186,8 @@
             // ctx.setTransform(100, 0, 0, 100, 0, 0);
             const nagents= sim.nAgents();
             for (let i = 0; i < nagents; i++) {
+                const agent = agents.get(i);
+
                 if (agent_id_center != -1){
                     ctx.fillStyle = "#e5e5e5";
                     ctx.strokeStyle = "#1c1c1c";
@@ -205,8 +207,6 @@
                     ctx.fillStyle = fillcolor_string;
                     ctx.strokeStyle = fillcolor_string;
                 }
-
-                const agent = agents.get(i);
                 // alert(getMethods(agent).join("\n"));
 
                 ctx.beginPath();
