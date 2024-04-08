@@ -15,64 +15,156 @@
 <!--</script>-->
 <div id="container">
     <canvas id="simulationCanvas"></canvas>
-    <div id="controls-container">
-        <div id="controls">
-<!--            <div id="controls_title">Parameters</div>-->
-            <div class="slider-container">
-                <label for="speed" class="slider-label">Speed</label>
-                <input type="range" id="speed" min="1" max="20" value="10">
-                <span id="speedIndicator" class="slider-indicator">10</span>
-            </div>
-            <div class="slider-container">
-                <label for="perception" class="slider-label">Perception Radius</label>
-                <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.01">
-                <span id="perceptionIndicator" class="slider-indicator">0.2</span>
-
-            </div>
-            <div class="slider-container">
-                <label for="numAgents" class="slider-label">Number of Agents</label>
-                <input type="range" id="numAgents" min="10" max="1000" value="200" step="10">
-                <span id="numAgentsIndicator" class="slider-indicator">200</span>
-            </div>
-            <div class="slider-container">
-                <label for="elasticity" class="slider-label">Elasticity</label>
-                <input type="range" id="elasticity" min="0.05" max="0.95" value="0.5" step="0.01">
-                <span id="elasticityIndicator" class="slider-indicator">200</span>
-                <span id="elasticity-warning">Warning: Too large elasticity values might cause instabilities.</span>
-            </div>
-
-            <div>
-                <button id="resetBtn">Reset</button>
-            </div>
-            <div class="button-group" style="margin-top: 10px;">
-                <div class="tooltip">
-                    <input type="radio" id="policy1Btn" name="options" value="policy1Btn" checked>
-                    <label for="policy1Btn">Policy 1</label>
-                    <span class="tooltiptext">Each agent selects two others (A and B) at random and tries to place itself between A and B.</span>
+    <div id="controls-and-graph">
+        <div id="controls-container">
+            <div id="controls">
+                <!--            <div id="controls_title">Parameters</div>-->
+                <div class="slider-container">
+                    <label for="speed" class="slider-label">Speed</label>
+                    <input type="range" id="speed" min="1" max="20" value="10">
+                    <span id="speedIndicator" class="slider-indicator">10</span>
                 </div>
-                <div class="tooltip">
-                    <input type="radio" id="policy2Btn" name="options" value="policy2Btn">
-                    <label for="policy2Btn">Policy 2</label>
-                    <span class="tooltiptext"> Each agent selects two others (A and B) at random and tries to move such that B is between itself and A. </span>
-                </div>         
+                <div class="slider-container">
+                    <label for="perception" class="slider-label">Perception Radius</label>
+                    <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.01">
+                    <span id="perceptionIndicator" class="slider-indicator">0.2</span>
+
+                </div>
+                <div class="slider-container">
+                    <label for="numAgents" class="slider-label">Number of Agents</label>
+                    <input type="range" id="numAgents" min="10" max="1000" value="200" step="10">
+                    <span id="numAgentsIndicator" class="slider-indicator">200</span>
+                </div>
+                <div class="slider-container">
+                    <label for="elasticity" class="slider-label">Elasticity</label>
+                    <input type="range" id="elasticity" min="0.05" max="0.95" value="0.5" step="0.01">
+                    <span id="elasticityIndicator" class="slider-indicator">200</span>
+                    <span id="elasticity-warning">Warning: Too large elasticity values might cause instabilities.</span>
+                </div>
+
+                <div>
+                    <button id="resetBtn">Reset</button>
+                </div>
+                <div class="button-group" style="margin-top: 10px;">
+                    <div class="tooltip">
+                        <input type="radio" id="policy1Btn" name="options" value="policy1Btn" checked>
+                        <label for="policy1Btn">Policy 1</label>
+                        <span class="tooltiptext">Each agent selects two others (A and B) at random and tries to place itself between A and B.</span>
+                    </div>
+                    <div class="tooltip">
+                        <input type="radio" id="policy2Btn" name="options" value="policy2Btn">
+                        <label for="policy2Btn">Policy 2</label>
+                        <span class="tooltiptext"> Each agent selects two others (A and B) at random and tries to move such that B is between itself and A. </span>
+                    </div>
+                </div>
+            </div>
+            <div id="tips">
+                <p>Click the "Reset" button to reset the simulation.</p>
+                <p>Adjust the sliders to change the simulation parameters.</p>
+                <p>Click to focus an agent.</p>
+            </div>
+            <div class="performance_container">
+                <span id="compute">0 ms</span>
+                <span id="display">0 ms</span>
             </div>
         </div>
-        <div id="tips">
-            <p>Click the "Reset" button to reset the simulation.</p>
-            <p>Adjust the sliders to change the simulation parameters.</p>
-            <p>Click to focus an agent.</p>
-        </div>
-        <div class="performance_container">
-            <span id="compute">0 ms</span>
-            <span id="display">0 ms</span>
+        <div id="graph-container">
+            <label for="graphCanvas" class="graph-label">Avg. Dist. to Goal-Point</label>
+            <canvas id="graphCanvas" width="350" height="200"></canvas> <!-- Canvas for the graph -->
         </div>
     </div>
 </div>
 <script src="mas_sim.js"></script>
 <script src="color_grad.js"></script>
 <script>
+    function getWindowToCanvas(canvas, x, y) {
+        var rect = canvas.getBoundingClientRect();
+        var screenX = (x - rect.left) * (canvas.width / rect.width);
+        var screenY = (y - rect.top) * (canvas.height / rect.height);
+        const ctx = canvas.getContext("2d");
+        var transform = ctx.getTransform();
+        if (transform.isIdentity) {
+            return {
+                x: screenX,
+                y: screenY
+            };
+        } else {
+            //   console.log(transform.invertSelf()); //don't invert twice!!
+            const invMat = transform.invertSelf();
+
+            return {
+                x: (screenX * invMat.a + screenY * invMat.c + invMat.e),
+                y: (screenX * invMat.b + screenY * invMat.d + invMat.f)
+            };
+        }
+    }
+    const queue_length = 200;
+    function drawGraph(data, timestep) {
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Find the minimum and maximum values in the data
+        // const min = Math.min(...data);
+        const min = 0;
+        const max = Math.max(...data);
+        console.log(data);
+        console.log(max);
+
+        // Calculate the y-axis scale factor
+        const yScale = (canvas.height - 40) / (max - min);
+
+        // Draw axes
+        ctx.beginPath();
+        ctx.strokeStyle = "#1c1c1c";
+        ctx.moveTo(50, 10);
+        ctx.lineTo(50, canvas.height - 20);
+        ctx.lineTo(canvas.width - 20, canvas.height - 20);
+        ctx.stroke();
+
+        const xStep = (canvas.width - 70) / (data.length - 1);
+        ctx.lineWidth = 1;
+        timestep = timestep % 10;
+        for (let i = 0; i < data.length; i += 10) {
+            const x = 50 + (i - timestep + 10) * xStep;
+            ctx.beginPath();
+            ctx.moveTo(x, canvas.height - 15);
+            ctx.lineTo(x, canvas.height - 25);
+            ctx.stroke();
+        }
+
+        // Draw y-axis labels
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        const yStep = (max - min) / 5; // Divide the y-axis into 5 equal segments
+        for (let i = 0; i <= 5; i++) {
+            const y = canvas.height - 20 - i * (canvas.height - 40) / 5;
+            const label = (min + i * yStep).toFixed(2);
+            ctx.fillText(label, 45, y);
+        }
+
+        // Draw data points
+        ctx.beginPath();
+        ctx.strokeStyle = "#ea4242";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < data.length; i++) {
+            const x = 50 + i * (canvas.width - 70) / (data.length - 1);
+            const y = canvas.height - 20 - (data[i] - min) * yScale;
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+            // ctx.arc(x, y, 2, 0, Math.PI * 2);
+        }
+        ctx.stroke();
+    }
+
     // import Gradient from "./color_grad"
     Module.onRuntimeInitialized = _ => {
+        let timeStep = 0;
+
+        var dist_queue = []
         const canvas = document.getElementById('simulationCanvas');
         var speedSlider = document.getElementById('speed');
         var perceptionSlider = document.getElementById('perception');
@@ -105,27 +197,6 @@
         }
         perceptionSlider.onmouseup = function(){
             showP  = false;
-        }
-        function getWindowToCanvas(canvas, x, y) {
-            var rect = canvas.getBoundingClientRect();
-            var screenX = (x - rect.left) * (canvas.width / rect.width);
-            var screenY = (y - rect.top) * (canvas.height / rect.height);
-            const ctx = canvas.getContext("2d");
-            var transform = ctx.getTransform();
-            if (transform.isIdentity) {
-                return {
-                    x: screenX,
-                    y: screenY
-                };
-            } else {
-                //   console.log(transform.invertSelf()); //don't invert twice!!
-                const invMat = transform.invertSelf();
-
-                return {
-                    x: (screenX * invMat.a + screenY * invMat.c + invMat.e),
-                    y: (screenX * invMat.b + screenY * invMat.d + invMat.f)
-                };
-            }
         }
         var mousePos = {x: 0.0, y: 0.0};
         canvas.addEventListener('mousedown', function(event) {
@@ -184,8 +255,15 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             // ctx.setTransform(100, 0, 0, 100, 0, 0);
             const nagents= sim.nAgents();
+            var sum = 0;
             for (let i = 0; i < nagents; i++) {
                 const agent = agents.get(i);
+                if (agent[2] == -1){
+                    sum = sum += max_dist;
+                }
+                else {
+                    sum = sum + agent[2];
+                }
                 ctx.setLineDash([0, 0]);
                 if (agent_id_center != -1){
                     ctx.fillStyle = "#e5e5e5";
@@ -215,6 +293,12 @@
                     ctx.stroke();
                 }
             }
+            sum = sum/nagents;
+            dist_queue.push(sum)
+            // console.log(sum)
+            if (dist_queue.length > queue_length) {
+                dist_queue.shift();
+            }
             if (agent_id_center != -1){
                 const agent = agents.get(agent_id_center);
                 ctx.setLineDash([0.06, 0.04]);
@@ -227,12 +311,14 @@
             ctx.fillStyle = "#1c1c1c";
             ctx.strokeStyle = "#1c1c1c";
             // console.log(performance.now())
+            const simulationData = [10, 20, 15, 25, 30, 20, 35, 40, 30, 45];
+            timeStep = timeStep + 1;
+            drawGraph(dist_queue, timeStep);
             dispIndicator.textContent = "Visualization time: " + ((performance.now() - t)).toFixed(1) + " ms";
             animationId = requestAnimationFrame(drawAgents);
         }
         function updateSimulation() {
             // var pos = getMousePos(canvas, evt);
-
             const t = performance.now();
             sim.step();
             // console.log(performance.now() - t);
