@@ -134,6 +134,7 @@ void Agent::calculateMotionA()
         acceleration(0, 0) = cosf(angle) * config.accel;
         acceleration(1, 0) = sinf(angle) * config.accel;
 
+        distance_to_goal = -1;
     }
     else if(!inViewA || !inViewB) {
         Agent* visible_agent = (inViewA) ? chosen_agent_A : chosen_agent_B;
@@ -147,7 +148,7 @@ void Agent::calculateMotionA()
         }
 //        std::cout << norm_2 << std::endl;
         acceleration = dir * config.accel;
-
+        distance_to_goal = norm_2;
     }
     else {
         // Need to find distance to connecting vector of the other two agents
@@ -162,6 +163,7 @@ void Agent::calculateMotionA()
 //        auto projection = poseA + t * dir;
 //     Eigen::Matrix<float, 3, 1> movement_dir = projection - pose;
         Eigen::Matrix<float, 2, 1> movement_dir = (poseB + poseA) / 2.0f - pose;
+        
         float norm_2 = powf(movement_dir(0, 0), 2) + powf(movement_dir(1, 0), 2);
 //        if(sqrtf(norm_2) < 2 * config.body_radius){
 //            movement_dir*=0;
@@ -171,6 +173,8 @@ void Agent::calculateMotionA()
         }
 //        std::cout << norm_2 << std::endl;
         acceleration = movement_dir * config.accel;
+
+        distance_to_goal = norm_2;
     }
 }
 void Agent::calculateMotionB()
@@ -188,6 +192,7 @@ void Agent::calculateMotionB()
         acceleration(0, 0) = cosf(angle) * config.accel;
         acceleration(1, 0) = sinf(angle) * config.accel;
 
+        distance_to_goal = -1;
     }
     else if(!inViewA || !inViewB) {
         if (!inViewA){
@@ -198,6 +203,7 @@ void Agent::calculateMotionB()
                 dir = dir / sqrtf(norm_2);
             }
             acceleration = -dir * config.accel;
+            distance_to_goal = norm_2;
         }
         else {
             // Hug agent A
@@ -207,6 +213,7 @@ void Agent::calculateMotionB()
                 dir = dir / sqrtf(norm_2);
             }
             acceleration = dir * config.accel;
+            distance_to_goal = norm_2;
         }
     }
     else {
@@ -214,6 +221,7 @@ void Agent::calculateMotionB()
         Eigen::Matrix<float, 2, 1> dir_agent = (chosen_agent_A->getPose() - chosen_agent_B->getPose());
         Eigen::Matrix<float, 2, 1> goal_point = dir_agent/dir_agent.norm() * 0.5f + chosen_agent_A->getPose();
         Eigen::Matrix<float, 2, 1> movement_dir = goal_point - pose;
+
         float norm_2 = powf(movement_dir(0, 0), 2) + powf(movement_dir(1, 0), 2);
 //        if(sqrtf(norm_2) < 2 * config.body_radius){
 //            movement_dir*=0;
@@ -223,6 +231,7 @@ void Agent::calculateMotionB()
         }
 //        std::cout << norm_2 << std::endl;
         acceleration = movement_dir * config.accel;
+        distance_to_goal = norm_2;
     }
 }
 void Agent::calculateMotion()
