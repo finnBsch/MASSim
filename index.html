@@ -69,11 +69,10 @@
     </div>
 </div>
 <script src="mas_sim.js"></script>
+<script src="color_grad.js"></script>
 <script>
+    // import Gradient from "./color_grad"
     Module.onRuntimeInitialized = _ => {
-        const mindist_hsv = [4, 78, 30]
-        const maxdist_hsv = [4, 0, 11]
-        // console.log(sim.nAgents()); // prints 22
         const canvas = document.getElementById('simulationCanvas');
         var speedSlider = document.getElementById('speed');
         var perceptionSlider = document.getElementById('perception');
@@ -128,7 +127,7 @@
                 };
             }
         }
-        mousePos = {x: 0.0, y: 0.0};
+        var mousePos = {x: 0.0, y: 0.0};
         canvas.addEventListener('mousedown', function(event) {
             var x = event.pageX - canvas.offsetLeft
             var y = event.pageY - canvas.offsetTop;
@@ -187,25 +186,14 @@
             const nagents= sim.nAgents();
             for (let i = 0; i < nagents; i++) {
                 const agent = agents.get(i);
-
+                ctx.setLineDash([0, 0]);
                 if (agent_id_center != -1){
                     ctx.fillStyle = "#e5e5e5";
                     ctx.strokeStyle = "#1c1c1c";
                 }
                 else {
-                    const distance = agent[2];
-                    var color;
-                    if (distance == -1){
-                        color = maxdist_hsv;
-                    }
-                    else {
-                        color = [0, 0, 0]
-                        color[1] = (maxdist_hsv[1] - mindist_hsv[1])/max_dist * distance + mindist_hsv[1];
-                        color[2] = (maxdist_hsv[2] - mindist_hsv[2])/max_dist * distance + mindist_hsv[2];
-                    }
-                    const fillcolor_string =  'hsl('+ color[0] +',' + Math.round(color[1]) + '%,' + Math.round(color[2]) + '%)';
-                    ctx.fillStyle = fillcolor_string;
-                    ctx.strokeStyle = fillcolor_string;
+                    ctx.fillStyle = "#1c1c1c";
+                    ctx.strokeStyle = "#1c1c1c";
                 }
                 // alert(getMethods(agent).join("\n"));
 
@@ -213,10 +201,10 @@
 
                 ctx.arc(agent[0], agent[1], .04, 0, 2 * Math.PI);
                 if (i == agent_id_center){
-                    ctx.fillStyle = "#d72525"; //blue
+                    ctx.fillStyle = "#da5a5f"; //blue
                 }
                 else if (i == agent1 || i == agent2){
-                    ctx.fillStyle = "#3c9156";
+                    ctx.fillStyle = "#319396";
                 }
                 ctx.fill();
                 if (showP){
@@ -229,6 +217,7 @@
             }
             if (agent_id_center != -1){
                 const agent = agents.get(agent_id_center);
+                ctx.setLineDash([0.06, 0.04]);
                 ctx.beginPath();
                 ctx.arc(agent[0], agent[1], perceptionSlider.value, 0, 2 * Math.PI);
                 ctx.strokeStyle = "#a8a8a8";
