@@ -36,6 +36,8 @@ protected:
     Eigen::Matrix<float, 2, 1> pose; // x/y/yaw
     Eigen::Matrix<float, 2, 1> velocity;
     Eigen::Matrix<float, 2, 1> acceleration;
+    
+    float distance_to_goal = -1;
     // Perception
 
 
