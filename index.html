@@ -392,7 +392,9 @@
             // console.log(speed.value);
         }
         setTimeout(updateSimulation, 20);
-        animationId = requestAnimationFrame(drawAgents);
+        setTimeout(function() {
+            animationId = requestAnimationFrame(drawAgents);
+        }, 20);
         // speedInput.addEventListener('input', setSpeed);
         resetBtn.addEventListener('click', resetSimulation);
         policy1Btn.addEventListener('click', setPolicy1);
