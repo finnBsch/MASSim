@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Multi-Agent Simulation</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.4">
 </head>
 <body>
 <!--<script>-->
@@ -16,8 +16,12 @@
 <div id="container">
     <canvas id="simulationCanvas"></canvas>
     <div id="controls-and-graph">
-        <div id="controls-container">
-            <div id="controls">
+        <div class="outer-container">
+            <div class="header">
+                <h2 class="container-title">Controls</h2>
+                <button class="collapse-button">-</button>
+            </div>
+            <div class="content_div">
                 <!--            <div id="controls_title">Parameters</div>-->
                 <div class="slider-container">
                     <label for="speed" class="slider-label">Speed</label>
@@ -57,26 +61,41 @@
                         <span class="tooltiptext"> Each agent selects two others (A and B) at random and tries to move such that B is between itself and A. </span>
                     </div>
                 </div>
-            </div>
-            <div id="tips">
-                <p>Click the "Reset" button to reset the simulation.</p>
-                <p>Adjust the sliders to change the simulation parameters.</p>
-                <p>Click to focus an agent.</p>
-            </div>
-            <div class="performance_container">
-                <span id="compute">0 ms</span>
-                <span id="display">0 ms</span>
+                <div id="tips">
+                    <p>Click the "Reset" button to reset the simulation.</p>
+                    <p>Adjust the sliders to change the simulation parameters.</p>
+                    <p>Click to focus an agent.</p>
+                </div>
+                <div class="performance_container">
+                    <span id="compute">0 ms</span>
+                    <span id="display">0 ms</span>
+                </div>
             </div>
         </div>
-        <div id="graph-container">
-            <label for="graphCanvas" class="graph-label">Avg. Dist. to Goal-Point</label>
+        <div class="outer-container">
+            <div class="header">
+                <h2 class="container-title">Graphs</h2>
+                <button class="collapse-button">-</button>
+            </div>
+            <div class="content_div">
             <canvas id="graphCanvas" width="350" height="200"></canvas> <!-- Canvas for the graph -->
+            <label for="graphCanvas" class="graph-label">Avg. Dist. to Goal-Point</label>
+            </div>
         </div>
     </div>
 </div>
 <script src="mas_sim.js"></script>
 <script src="color_grad.js"></script>
 <script>
+    document.querySelectorAll('.collapse-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const container = e.target.parentElement.parentElement;
+            const content = container.querySelector('.content_div');
+            container.classList.toggle('collapsed_');
+            content.classList.toggle('collapsed');
+            e.target.textContent = content.classList.contains('collapsed') ? '+' : '-';
+        });
+    });
     function getWindowToCanvas(canvas, x, y) {
         var rect = canvas.getBoundingClientRect();
         var screenX = (x - rect.left) * (canvas.width / rect.width);
@@ -108,8 +127,6 @@
         // const min = Math.min(...data);
         const min = 0;
         const max = Math.max(...data);
-        console.log(data);
-        console.log(max);
 
         // Calculate the y-axis scale factor
         const yScale = (canvas.height - 40) / (max - min);

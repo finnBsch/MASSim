@@ -21,6 +21,16 @@ body {
     /*border: 1px solid black;*/
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+/*.header h2 {*/
+
+/*}*/
+
 #controls-and-graph {
     position: absolute;
     top: 50px;
@@ -32,33 +42,62 @@ body {
     padding: 10px;
     z-index: 2; /* Ensure controls-container is above graphCanvas */
 }
-#controls-container {
-    grid-row: 1;
+.outer-container {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #333;
 }
-#graph-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    grid-row: 2;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #333;
+.outer-container.collapsed_ {
+    /*padding: 5px 10px; !* Adjust these values as needed *!*/
+    height: auto;
+
 }
 #graph-label {
     margin-right: 5px;
     white-space: nowrap; /* Prevent labels from wrapping */
 }
-#controls {
+.content_div {
+    margin-top: 10px; /* Adjust the value as needed */
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+}
+
+.collapsed {
+    height: 0px;
+    overflow: hidden;
+    padding: 0; /* Add this line */
+    margin: 0;
+}
+.container-title {
+    /*position: absolute;*/
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 0;
+}
+
+.collapse-button {
+    box-sizing: border-box; /* Add this line */
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /*position: absolute;*/
+    right: 10px;
+}
+
+.collapse-button:hover {
+    background-color: #555;
 }
 
 #controls_title {
