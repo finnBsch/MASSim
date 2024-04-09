@@ -179,6 +179,8 @@
 
     // import Gradient from "./color_grad"
     Module.onRuntimeInitialized = _ => {
+        let hasRunOnce = false;
+
         let timeStep = 0;
 
         var dist_queue = []
@@ -237,7 +239,7 @@
         else {
             f1 = ratio;
         }
-        const max_dist = Math.sqrt(Math.pow(15*f1, 2) + Math.pow(15*f2, 2));
+        // const max_dist = Math.sqrt(Math.pow(15*f1, 2) + Math.pow(15*f2, 2));
         const sim = new Module.MASSim(200, 15*f1, 15*f2);
         ctx.beginPath();
         ctx.setTransform(window.innerWidth/15/f1, 0, 0, window.innerHeight/15/f2, 0, 0);
@@ -328,7 +330,6 @@
             ctx.fillStyle = "#1c1c1c";
             ctx.strokeStyle = "#1c1c1c";
             // console.log(performance.now())
-            const simulationData = [10, 20, 15, 25, 30, 20, 35, 40, 30, 45];
             timeStep = timeStep + 1;
             drawGraph(dist_queue, timeStep);
             dispIndicator.textContent = "Visualization time: " + ((performance.now() - t)).toFixed(1) + " ms";
@@ -343,6 +344,7 @@
             computeIndicator.textContent = "Simulation time: " + ((performance.now() - t)).toFixed(1) + " ms";
             // console.log(performance.now() - t);
             // console.log("---")
+            hasRunOnce = true;
             setTimeout(updateSimulation, 20);
         }
 
@@ -392,9 +394,16 @@
             // console.log(speed.value);
         }
         setTimeout(updateSimulation, 20);
-        setTimeout(function() {
+        new Promise((resolve) => {
+            const checkInterval = setInterval(() => {
+                if (hasRunOnce) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 20); // Check every 100ms
+        }).then(() => {
             animationId = requestAnimationFrame(drawAgents);
-        }, 20);
+        });
         // speedInput.addEventListener('input', setSpeed);
         resetBtn.addEventListener('click', resetSimulation);
         policy1Btn.addEventListener('click', setPolicy1);
