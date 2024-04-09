@@ -277,12 +277,7 @@
             var sum = 0;
             for (let i = 0; i < nagents; i++) {
                 const agent = agents.get(i);
-                if (agent[2] == -1){
-                    sum = sum += max_dist;
-                }
-                else {
-                    sum = sum + agent[2];
-                }
+                sum = sum + agent[2];
                 ctx.setLineDash([0, 0]);
                 if (agent_id_center != -1){
                     ctx.fillStyle = "#e5e5e5";
