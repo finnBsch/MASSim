@@ -10,6 +10,7 @@
 #include <queue>
 class MASSim{
 private:
+    bool walls_enabled = true;
     AgentConfig defaultConf;
     int sub_steps = 16;
     float elasticity = 0.5;
@@ -43,6 +44,7 @@ public:
     std::array<int, 3> getFocusAgent(float x, float y);
     void setPolicy1();
     void setPolicy2();
+    void toggleWalls(bool state);
 };
 
 #endif //MASSIM_MAS_SIM_H

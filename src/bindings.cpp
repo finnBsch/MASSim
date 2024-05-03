@@ -53,6 +53,7 @@ EMSCRIPTEN_BINDINGS(my_module){
                 .function("setElasticity", &MASSim::setElasticity)
                 .function("setPolicy1", &MASSim::setPolicy1)
                 .function("setPolicy2", &MASSim::setPolicy2)
+                .function("toggleWalls", &MASSim::toggleWalls)
                 ;
 //                .function("incrementX", &MyClass::incrementX)
 //                .property("x", &MyClass::getX, &MyClass::setX)
