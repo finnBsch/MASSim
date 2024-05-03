@@ -279,6 +279,9 @@ bool MASSim::correctAgentGroup(Agent *agent0, GridCell * agents_group) {
 }
 
 void MASSim::correctSingleAgent(Agent *agent) {
+    if (!walls_enabled) {
+        return;
+    }
     float x = agent->getX();
     float y = agent->getY();
     if (x < defaultConf.body_radius){
@@ -396,4 +399,8 @@ void MASSim::setPolicy2() {
     // for(auto& agent: agents){
     //     agent->pickAgents(agents);
     // }
+}
+
+void MASSim::toggleWalls(bool state) {
+    walls_enabled = state;
 }

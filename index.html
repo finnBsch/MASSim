@@ -204,6 +204,7 @@
         const elasticityIndicator = document.getElementById('elasticityIndicator');
         const computeIndicator = document.getElementById('compute');
         const dispIndicator = document.getElementById('display');
+        const wallCheckbox = document.getElementById('mySwitch');
         var agent_id_center = -1;
         var agent1 = -1;
         var agent2 = -1;
@@ -225,6 +226,9 @@
         }
         perceptionSlider.onmouseup = function(){
             showP  = false;
+        }
+        wallCheckbox.onchange = function() {
+            sim.toggleWalls(this.checked);
         }
         var mousePos = {x: 0.0, y: 0.0};
         canvas.addEventListener('mousedown', function(event) {
