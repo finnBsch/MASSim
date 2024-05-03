@@ -209,6 +209,13 @@ void MASSim::setSpeed(float speed) {
 
 }
 
+void MASSim::setSpeedHeterogeneity(float speedHeterogeneity) {
+    defaultConf.speedHeterogeneity = speedHeterogeneity;
+    for (auto& agent:agents){
+        agent->setConfig(defaultConf);
+    }
+}
+
 bool MASSim::correctGridBased() {
     int gnx = grid.getNx();
     int gny = grid.getNy();

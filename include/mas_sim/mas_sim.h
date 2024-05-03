@@ -38,6 +38,7 @@ public:
     MASSim(int n_agents, float size_x, float size_y);
     // API
     void setSpeed(float speed);
+    void setSpeedHeterogeneity(float speed);
     void setPerceptionRadius(float radius);
     void setNumAgents(int num_agents);
     void setElasticity(float elasticity);

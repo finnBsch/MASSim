@@ -28,7 +28,10 @@ Agent::Agent(AgentConfig config):
 
 Agent::Agent()
 {
-
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<float> distr(-1.0, 1.0);
+    sampled_deviation = distr(gen); // From -1 to 1
 }
 
 bool Agent::inView(Agent *agent, bool fov_check) {
@@ -68,7 +71,7 @@ void Agent::reset(float x_max, float y_max) {
 
 void Agent::step(float dt) {
     velocity = velocity + acceleration * dt - velocity*0.8 * dt;
-    pose = pose + velocity*dt * config.speed * config.speed_variance * (1.0f + config.sampled_deviation);
+    pose = pose + velocity*dt * config.speed * (1.0f + sampled_deviation * config.speedHeterogeneity);
 }
 
 void Agent::correctPose(float x, float y) {
@@ -179,7 +182,7 @@ void Agent::calculateMotionA()
 void Agent::calculateMotionB()
 {
     Eigen::Matrix<float, 2, 1> dir_agent = (chosen_agent_A->getPose() - chosen_agent_B->getPose());
-    Eigen::Matrix<float, 2, 1> goal_point = dir_agent/dir_agent.norm() * 0.5f + chosen_agent_A->getPose();
+    Eigen::Matrix<float, 2, 1> goal_point = dir_agent/dir_agent.norm() * 2.0f + chosen_agent_A->getPose();
     Eigen::Matrix<float, 2, 1> movement_dir = goal_point - pose;
 
     float norm_2 = powf(movement_dir(0, 0), 2) + powf(movement_dir(1, 0), 2);

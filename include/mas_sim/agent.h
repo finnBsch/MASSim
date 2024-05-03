@@ -13,8 +13,7 @@ enum class Policy{
 
 struct AgentConfig {
     float speed = 5.0f; // m/s
-    float sampled_deviation = 0.0f; // From -1 to 1
-    float speed_variance = 0.0f;
+    float speedHeterogeneity = 0.0f;
     float accel = 1.0f;
     int fov_angle = 360;
     float perception_radius = 6.0f;
@@ -39,9 +38,8 @@ protected:
     Eigen::Matrix<float, 2, 1> velocity;
     Eigen::Matrix<float, 2, 1> acceleration;
 
-    // Perception
-
-
+    // Deviation of speed heterogeneity
+    float sampled_deviation = 0.0f; // From -1 to 1
 
     // Runtime methods
     bool inView(Agent* agent, bool fov_check=false);
@@ -65,6 +63,7 @@ public:
 
     // Param get set
     float getSpeed();
+    float getSpeedHeterogeneity();
     float getRadius();
     float getX();
     float getY();

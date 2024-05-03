@@ -29,10 +29,14 @@
                     <span id="speedIndicator" class="slider-indicator">10</span>
                 </div>
                 <div class="slider-container">
+                    <label for="speedHeterogeneity" class="slider-label">Speed Heterogeneity</label>
+                    <input type="range" id="speedHeterogeneity" min="0.0" max="1.0" value="0.0" step="0.01">
+                    <span id="speedHeterogeneityIndicator" class="slider-indicator">0.0</span>
+                </div>
+                <div class="slider-container">
                     <label for="perception" class="slider-label">Perception Radius</label>
                     <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.01">
                     <span id="perceptionIndicator" class="slider-indicator">0.2</span>
-
                 </div>
                 <div class="slider-container">
                     <label for="numAgents" class="slider-label">Number of Agents</label>
@@ -195,10 +199,12 @@
         var speed_queue = []
         const canvas = document.getElementById('simulationCanvas');
         var speedSlider = document.getElementById('speed');
+        var speedHeterogeneitySlider = document.getElementById('speedHeterogeneity');
         var perceptionSlider = document.getElementById('perception');
         var nASlider = document.getElementById('numAgents');
         var elasticitySlider = document.getElementById('elasticity');
         const speedIndicator = document.getElementById('speedIndicator');
+        const speedHeterogeneityIndicator = document.getElementById('speedHeterogeneityIndicator');
         const numAgentsIndicator = document.getElementById('numAgentsIndicator');
         const perceptionIndicator = document.getElementById('perceptionIndicator');
         const elasticityIndicator = document.getElementById('elasticityIndicator');
@@ -211,6 +217,9 @@
         var showP = false
         speedSlider.oninput = function() {
             setSpeed(this.value);
+        }
+        speedHeterogeneitySlider.oninput = function() {
+            setSpeedHeterogeneity(this.value);
         }
         nASlider.oninput = function() {
             setNumAgents(this.value);
@@ -266,6 +275,7 @@
         let agents = sim.getAgents();
         var animationId;
         setSpeed(speedSlider.value)
+        setSpeedHeterogeneity(speedHeterogeneitySlider.value)
         setNumAgents(nASlider.value)
         setPerceptionRadius(perceptionSlider.value)
         setElasticity(elasticitySlider.value)
@@ -381,6 +391,12 @@
             sim.setSpeed(speed/2);
             speedIndicator.textContent = speed/2;
             // console.log(speed.value);
+        }
+        function setSpeedHeterogeneity(speedHeter){
+            speedHeterogeneityIndicator.textContent = speedHeter;
+            speedHeter = speedHeter/1.01;
+            sim.setSpeedHeterogeneity(speedHeter);
+            console.log(speedHeter);
         }
         function setElasticity(elasticity){
             sim.setElasticity(elasticity);

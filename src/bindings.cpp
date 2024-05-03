@@ -47,6 +47,7 @@ EMSCRIPTEN_BINDINGS(my_module){
 //                .function("getAgentsDirect", &MASSim::getAgentsDirect)
                 .function("reset", &MASSim::reset)
                 .function("setSpeed", &MASSim::setSpeed)
+                .function("setSpeedHeterogeneity", &MASSim::setSpeedHeterogeneity)
                 .function("setPerceptionRadius", &MASSim::setPerceptionRadius)
                 .function("setNumAgents", &MASSim::setNumAgents)
                 .function("getFocusAgent", &MASSim::getFocusAgent)
