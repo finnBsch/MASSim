@@ -194,6 +194,7 @@ input[type="range"]:focus::-moz-range-track {
 }
 
 #resetBtn {
+    margin-top: 10px;
     background-color: #333;
     color: #fff;
     padding: 10px 20px;
@@ -210,7 +211,6 @@ input[type="range"]:focus::-moz-range-track {
 }
 
 #tips {
-    margin-top: 20px;
     font-size: 14px;
     color: #555;
     text-align: center;
@@ -237,7 +237,6 @@ input[type="range"]:focus::-moz-range-track {
     display: flex;
     gap: 10px;
 }
-
 .button-group input[type="radio"] {
     display: none; /* Hide the actual radio buttons */
 }
@@ -256,6 +255,8 @@ input[type="range"]:focus::-moz-range-track {
     background-color: #333;
     color: #fff;
 }
+
+
 
 .tooltip {
   position: relative;
@@ -284,4 +285,46 @@ input[type="range"]:focus::-moz-range-track {
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 0.8;
+}
+
+.slide-switch-input {
+    display: none;
+}
+
+.slide-switch-container {
+    /*position: flex;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    /*width: 60px;*/
+    /*height: 34px;*/
+}
+
+.slide-switch-label {
+    /*position: relati;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    background-color: #ccc;
+    cursor: pointer;
+    border-radius: 34px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap; /* Prevent labels from wrapping */
+}
+
+.slide-switch-label:before {
+    /*position: relati;*/
+    content: "";
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.slide-switch-input:checked + .slide-switch-label {
+    background-color: #2196F3;
+}
+
+.slide-switch-input:checked + .slide-switch-label:before {
+    transform: translateX(26px);
 }

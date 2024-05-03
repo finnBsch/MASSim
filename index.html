@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Multi-Agent Simulation</title>
-    <link rel="stylesheet" href="style.css?v=1.4">
+    <link rel="stylesheet" href="style.css?v=1.5">
 </head>
 <body>
 <!--<script>-->
@@ -22,9 +22,9 @@
                 <button class="collapse-button">-</button>
             </div>
             <div class="content_div">
-                <div class="slider-container">
-                    <label for="newControl" class="slider-label">New Control</label>
-                    <input type="checkbox" id="newControl">
+                <div class="slide-switch-container">
+                    <label for="slideSwitch" class="slide-switch-label">Use outside walls</label>
+                    <input type="checkbox" id="slideSwitch" class="slide-switch-input">
                 </div>
                 <!--            <div id="controls_title">Parameters</div>-->
                 <div class="slider-container">
@@ -49,10 +49,6 @@
                     <span id="elasticityIndicator" class="slider-indicator">200</span>
                     <span id="elasticity-warning">Warning: Too large elasticity values might cause instabilities.</span>
                 </div>
-
-                <div>
-                    <button id="resetBtn">Reset</button>
-                </div>
                 <div class="button-group" style="margin-top: 10px;">
                     <div class="tooltip">
                         <input type="radio" id="policy1Btn" name="options" value="policy1Btn" checked>
@@ -64,6 +60,9 @@
                         <label for="policy2Btn">Policy 2</label>
                         <span class="tooltiptext"> Each agent selects two others (A and B) at random and tries to move such that B is between itself and A. </span>
                     </div>
+                </div>
+                <div>
+                    <button id="resetBtn">Reset</button>
                 </div>
                 <div id="tips">
                     <p>Click the "Reset" button to reset the simulation.</p>
