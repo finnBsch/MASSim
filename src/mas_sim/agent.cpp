@@ -68,7 +68,7 @@ void Agent::reset(float x_max, float y_max) {
 
 void Agent::step(float dt) {
     velocity = velocity + acceleration * dt - velocity*0.8 * dt;
-    pose = pose + velocity*dt * config.speed;
+    pose = pose + velocity*dt * config.speed * config.speed_variance * (1.0f + config.sampled_deviation);
 }
 
 void Agent::correctPose(float x, float y) {
