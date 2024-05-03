@@ -286,45 +286,65 @@ input[type="range"]:focus::-moz-range-track {
   visibility: visible;
   opacity: 0.8;
 }
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+}
 
-.slide-switch-input {
-    display: none;
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .slide-switch-container {
-    /*position: flex;*/
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    /*width: 60px;*/
-    /*height: 34px;*/
+    align-items: center; /* This will center the items vertically */
 }
 
-.slide-switch-label {
-    /*position: relati;*/
-    /*width: 100%;*/
-    /*height: 100%;*/
-    background-color: #ccc;
+.slider {
+    position: absolute;
     cursor: pointer;
-    border-radius: 34px;
-    margin-right: 10px;
-    transition: background-color 0.3s ease;
-    white-space: nowrap; /* Prevent labels from wrapping */
-}
-
-.slide-switch-label:before {
-    /*position: relati;*/
-    content: "";
-    background-color: white;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
     transition: .4s;
+    /*height: 28px; !* Adjust the height as needed *!*/
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 25px;
+    width: 25px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+}
+
+input:checked + .slider {
+    background-color: #333;
+}
+
+input:checked + .slider:before {
+    transform: translateX(19px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
     border-radius: 50%;
+    /*height: 22px; !* Adjust the height as needed *!*/
+    /*width: 22px; !* Adjust the width as needed *!*/
 }
 
-.slide-switch-input:checked + .slide-switch-label {
-    background-color: #2196F3;
-}
-
-.slide-switch-input:checked + .slide-switch-label:before {
-    transform: translateX(26px);
+.switch-label {
+    margin-right: 10px;
 }
