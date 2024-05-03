@@ -11,7 +11,7 @@
 class MASSim{
 private:
     AgentConfig defaultConf;
-    int sub_steps=16;
+    int sub_steps = 16;
     float elasticity = 0.5;
     std::vector<std::array<int, 2>> agent_pairs;
     Grid grid;
@@ -30,7 +30,7 @@ public:
 
     void step();
     void reset();
-    std::vector<std::array<float, 3>> getAgents();
+    std::vector<std::array<float, 4>> getAgents();
     std::vector<Agent*> getAgentsDirect();
     int getN() const;
 //    MASSim(int n_agents);

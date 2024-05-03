@@ -62,6 +62,7 @@ public:
     void setVelocity(Eigen::Matrix<float, 2, 1> velocity);
 
     // Param get set
+    float getSpeed();
     float getRadius();
     float getX();
     float getY();

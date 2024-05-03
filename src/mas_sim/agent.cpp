@@ -247,3 +247,7 @@ void Agent::setConfig(AgentConfig& config)
 {
     this->config = config;
 }
+
+float Agent::getSpeed() {
+    return sqrtf(powf(velocity[0], 2) + powf(velocity[1], 2));
+}

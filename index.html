@@ -22,6 +22,10 @@
                 <button class="collapse-button">-</button>
             </div>
             <div class="content_div">
+                <div class="slider-container">
+                    <label for="newControl" class="slider-label">New Control</label>
+                    <input type="checkbox" id="newControl">
+                </div>
                 <!--            <div id="controls_title">Parameters</div>-->
                 <div class="slider-container">
                     <label for="speed" class="slider-label">Speed</label>
@@ -78,8 +82,12 @@
                 <button class="collapse-button">-</button>
             </div>
             <div class="content_div">
-            <canvas id="graphCanvas" width="350" height="200"></canvas> <!-- Canvas for the graph -->
-            <label for="graphCanvas" class="graph-label">Avg. Dist. to Goal-Point</label>
+                <label for="graphCanvas" class="graph-label">Avg. Dist. to Goal-Point</label>
+                <canvas id="graphCanvas" width="350" height="200"></canvas> <!-- Canvas for the graph -->
+            </div>
+            <div class="content_div">
+                <label for="graphSpeed" class="graph-label">Avg. Speed</label>
+                <canvas id="graphSpeed" width="350" height="200"></canvas> <!-- Canvas for the graph -->
             </div>
         </div>
     </div>
@@ -118,8 +126,8 @@
         }
     }
     const queue_length = 200;
-    function drawGraph(data, timestep) {
-        const canvas = document.getElementById('graphCanvas');
+    function drawGraph(data, timestep, graph_id) {
+        const canvas = document.getElementById(graph_id);
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -184,6 +192,7 @@
         let timeStep = 0;
 
         var dist_queue = []
+        var speed_queue = []
         const canvas = document.getElementById('simulationCanvas');
         var speedSlider = document.getElementById('speed');
         var perceptionSlider = document.getElementById('perception');
@@ -275,9 +284,11 @@
             // ctx.setTransform(100, 0, 0, 100, 0, 0);
             const nagents= sim.nAgents();
             var sum = 0;
+            var sumspeed = 0;
             for (let i = 0; i < nagents; i++) {
                 const agent = agents.get(i);
                 sum = sum + agent[2];
+                sumspeed = sumspeed + agent[3];
                 ctx.setLineDash([0, 0]);
                 if (agent_id_center != -1){
                     ctx.fillStyle = "#e5e5e5";
@@ -308,10 +319,13 @@
                 }
             }
             sum = sum/nagents;
+            sumspeed = sumspeed/nagents;
             dist_queue.push(sum)
+            speed_queue.push(sumspeed)
             // console.log(sum)
             if (dist_queue.length > queue_length) {
                 dist_queue.shift();
+                speed_queue.shift();
             }
             if (agent_id_center != -1){
                 const agent = agents.get(agent_id_center);
@@ -326,7 +340,8 @@
             ctx.strokeStyle = "#1c1c1c";
             // console.log(performance.now())
             timeStep = timeStep + 1;
-            drawGraph(dist_queue, timeStep);
+            drawGraph(dist_queue, timeStep, 'graphCanvas');
+            drawGraph(speed_queue, timeStep, 'graphSpeed');
             dispIndicator.textContent = "Visualization time: " + ((performance.now() - t)).toFixed(1) + " ms";
             animationId = requestAnimationFrame(drawAgents);
         }

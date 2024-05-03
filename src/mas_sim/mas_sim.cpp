@@ -178,11 +178,11 @@ int MASSim::getN() const {
     return n_agents;
 }
 
-std::vector<std::array<float, 3>> MASSim::getAgents() {
-    std::vector<std::array<float, 3>> agents_vec(n_agents);
+std::vector<std::array<float, 4>> MASSim::getAgents() {
+    std::vector<std::array<float, 4>> agents_vec(n_agents);
     for (int i = 0; i < n_agents; i++){
         auto pose = agents[i]->getPose();
-        agents_vec[i] = std::array<float, 3>{pose[0], pose[1], agents[i]->distance_to_goal};
+        agents_vec[i] = std::array<float, 4>{pose[0], pose[1], agents[i]->distance_to_goal, agents[i]->getSpeed()};
     }
     return agents_vec;
 }
