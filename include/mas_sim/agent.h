@@ -4,57 +4,77 @@
 
 #ifndef MASSIM_AGENT_H
 #define MASSIM_AGENT_H
-#include "viz.h"
 #include <eigen3/Eigen/Dense>
 
+enum class Policy{
+    A,
+    B
+};
+
 struct AgentConfig {
-    float dt = 0.01f; // s
     float speed = 5.0f; // m/s
+    float speedHeterogeneity = 0.0f;
+    float accel = 1.0f;
     int fov_angle = 360;
-    float perception_radius = 4.0f;
+    float perception_radius = 6.0f;
     float body_radius = 0.04f;
+    Policy policy;
+
 };
 
 struct AgentVizConfig {
     int n_pts_fov = 40;
 };
 
-class Agent: public DrawableObject {
+class Agent{
 protected:
+    int grid_id_x = -1;
+    int grid_id_y = -1;
     AgentConfig config;
     AgentVizConfig viz_config;
 
-    Agent* chosen_agent_A;
-    Agent* chosen_agent_B;
     //
-    Eigen::Matrix<float, 3, 1> pose; // x/y/yaw
-    Eigen::Matrix<float, 3, 1> motion_input;
-    // Perception
-    const std::vector<Agent*>* agents;
+    Eigen::Matrix<float, 2, 1> pose; // x/y/yaw
+    Eigen::Matrix<float, 2, 1> velocity;
+    Eigen::Matrix<float, 2, 1> acceleration;
 
-    // Viz
-    sf::Color color;
-    sf::CircleShape agent_body_viz;
-    sf::ConvexShape fov_viz;
+    // Deviation of speed heterogeneity
+    float sampled_deviation = 0.0f; // From -1 to 1
 
     // Runtime methods
     bool inView(Agent* agent, bool fov_check=false);
+    void calculateMotionA();
+    void calculateMotionB();
 
 public:
-    Agent(const std::vector<Agent*>* agents, AgentConfig config);
-    Agent(const std::vector<Agent*>* agents);
-    virtual void calculateMotion() = 0;
-    void step();
+    Agent(AgentConfig config);
+    Agent();
+    void calculateMotion();
+    void step(float dt);
 
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
     // Runtime methods
-    void pickAgents();
-    const Eigen::Matrix<float, 3, 1>& getPose() const;
+    void pickAgents(std::vector<Agent*>& agents);
+    const Eigen::Matrix<float, 2, 1>& getPose() const;
+    const Eigen::Matrix<float, 2, 1>& getVelocity() const;
     void reset(float x_max, float y_max);
     void correctPose(float x, float y);
+    void correctPose(Eigen::Matrix<float, 2, 1> pose);
+    void setVelocity(Eigen::Matrix<float, 2, 1> velocity);
 
     // Param get set
+    float getSpeed();
+    float getSpeedHeterogeneity();
     float getRadius();
+    float getX();
+    float getY();
+    int getGridX();
+    int getGridY();
+    void setConfig(AgentConfig& config);
+    void setGridId(int idx, int idy);
+
+    Agent* chosen_agent_A;
+    Agent* chosen_agent_B;
+    float distance_to_goal = -1;
 };
 
 #endif //MASSIM_AGENT_H

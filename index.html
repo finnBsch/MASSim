@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Multi-Agent Simulation</title>
+    <link rel="stylesheet" href="style.css?v=1.5">
+</head>
+<body>
+<!--<script>-->
+<!--    // var Module = {-->
+<!--    //     onRuntimeInitialized: function() {-->
+<!--    //         console.log('lerp result: ' + Module.lerp(1, 2, 0.5));-->
+<!--    //     }-->
+<!--    // };-->
+<!--</script>-->
+<div id="container">
+    <canvas id="simulationCanvas"></canvas>
+    <div id="controls-and-graph">
+        <div class="outer-container">
+            <div class="header">
+                <h2 class="container-title">Controls</h2>
+                <button class="collapse-button">-</button>
+            </div>
+            <div class="content_div">
+                <!--            <div id="controls_title">Parameters</div>-->
+                <div class="slider-container">
+                    <label for="speed" class="slider-label">Speed</label>
+                    <input type="range" id="speed" min="1" max="20" value="10">
+                    <span id="speedIndicator" class="slider-indicator">10</span>
+                </div>
+                <div class="slider-container">
+                    <label for="speedHeterogeneity" class="slider-label">Speed Heterogeneity</label>
+                    <input type="range" id="speedHeterogeneity" min="0.0" max="1.0" value="0.0" step="0.01">
+                    <span id="speedHeterogeneityIndicator" class="slider-indicator">0.0</span>
+                </div>
+                <div class="slider-container">
+                    <label for="perception" class="slider-label">Perception Radius</label>
+                    <input type="range" id="perception" min="0.2" max="20.0" value="0.2" step="0.01">
+                    <span id="perceptionIndicator" class="slider-indicator">0.2</span>
+                </div>
+                <div class="slider-container">
+                    <label for="numAgents" class="slider-label">Number of Agents</label>
+                    <input type="range" id="numAgents" min="10" max="1000" value="200" step="10">
+                    <span id="numAgentsIndicator" class="slider-indicator">200</span>
+                </div>
+                <div class="slider-container">
+                    <label for="elasticity" class="slider-label">Elasticity</label>
+                    <input type="range" id="elasticity" min="0.05" max="0.95" value="0.5" step="0.01">
+                    <span id="elasticityIndicator" class="slider-indicator">200</span>
+                    <span id="elasticity-warning">Warning: Too large elasticity values might cause instabilities.</span>
+                </div>
+                <div class="slide-switch-container">
+                    <label for="mySwitch" class="switch-label">Use outside walls</label>
+                    <label class="switch">
+                        <input type="checkbox" id="mySwitch" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="button-group" style="margin-top: 10px;">
+                    <div class="tooltip">
+                        <input type="radio" id="policy1Btn" name="options" value="policy1Btn" checked>
+                        <label for="policy1Btn">Policy 1</label>
+                        <span class="tooltiptext">Each agent selects two others (A and B) at random and tries to place itself between A and B.</span>
+                    </div>
+                    <div class="tooltip">
+                        <input type="radio" id="policy2Btn" name="options" value="policy2Btn">
+                        <label for="policy2Btn">Policy 2</label>
+                        <span class="tooltiptext"> Each agent selects two others (A and B) at random and tries to move such that B is between itself and A. </span>
+                    </div>
+                </div>
+                <div>
+                    <button id="resetBtn">Reset</button>
+                </div>
+                <div id="tips">
+                    <p>Click the "Reset" button to reset the simulation.</p>
+                    <p>Adjust the sliders to change the simulation parameters.</p>
+                    <p>Click to focus an agent.</p>
+                </div>
+                <div class="performance_container">
+                    <span id="compute">0 ms</span>
+                    <span id="display">0 ms</span>
+                </div>
+            </div>
+        </div>
+        <div class="outer-container collapsed_">
+            <div class="header">
+                <h2 class="container-title">Graphs</h2>
+                <button class="collapse-button">+</button>
+            </div>
+            <div class="content_div collapsed">
+                <label for="graphCanvas" class="graph-label">Avg. Dist. to Goal-Point</label>
+                <canvas id="graphCanvas" width="350" height="200"></canvas> <!-- Canvas for the graph -->
+                <label for="graphSpeed" class="graph-label">Avg. Speed</label>
+                <canvas id="graphSpeed" width="350" height="200"></canvas> <!-- Canvas for the graph -->
+            </div>
+        </div>
+    </div>
+</div>
+<script src="mas_sim.js"></script>
+<script src="color_grad.js"></script>
+<script>
+    document.querySelectorAll('.collapse-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const container = e.target.parentElement.parentElement;
+            const content = container.querySelector('.content_div');
+            container.classList.toggle('collapsed_');
+            content.classList.toggle('collapsed');
+            e.target.textContent = content.classList.contains('collapsed') ? '+' : '-';
+        });
+    });
+    function getWindowToCanvas(canvas, x, y) {
+        var rect = canvas.getBoundingClientRect();
+        var screenX = (x - rect.left) * (canvas.width / rect.width);
+        var screenY = (y - rect.top) * (canvas.height / rect.height);
+        const ctx = canvas.getContext("2d");
+        var transform = ctx.getTransform();
+        if (transform.isIdentity) {
+            return {
+                x: screenX,
+                y: screenY
+            };
+        } else {
+            //   console.log(transform.invertSelf()); //don't invert twice!!
+            const invMat = transform.invertSelf();
+
+            return {
+                x: (screenX * invMat.a + screenY * invMat.c + invMat.e),
+                y: (screenX * invMat.b + screenY * invMat.d + invMat.f)
+            };
+        }
+    }
+    const queue_length = 200;
+    function drawGraph(data, timestep, graph_id) {
+        const canvas = document.getElementById(graph_id);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Find the minimum and maximum values in the data
+        // const min = Math.min(...data);
+        const min = 0;
+        const max = Math.max(...data);
+
+        // Calculate the y-axis scale factor
+        const yScale = (canvas.height - 40) / (max - min);
+
+        // Draw axes
+        ctx.beginPath();
+        ctx.strokeStyle = "#1c1c1c";
+        ctx.moveTo(50, 10);
+        ctx.lineTo(50, canvas.height - 20);
+        ctx.lineTo(canvas.width - 20, canvas.height - 20);
+        ctx.stroke();
+
+        const xStep = (canvas.width - 70) / (data.length - 1);
+        ctx.lineWidth = 1;
+        timestep = timestep % 10;
+        for (let i = 0; i < data.length; i += 10) {
+            const x = 50 + (i - timestep + 10) * xStep;
+            ctx.beginPath();
+            ctx.moveTo(x, canvas.height - 15);
+            ctx.lineTo(x, canvas.height - 25);
+            ctx.stroke();
+        }
+
+        // Draw y-axis labels
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        const yStep = (max - min) / 5; // Divide the y-axis into 5 equal segments
+        for (let i = 0; i <= 5; i++) {
+            const y = canvas.height - 20 - i * (canvas.height - 40) / 5;
+            const label = (min + i * yStep).toFixed(2);
+            ctx.fillText(label, 45, y);
+        }
+
+        // Draw data points
+        ctx.beginPath();
+        ctx.strokeStyle = "#ea4242";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < data.length; i++) {
+            const x = 50 + i * (canvas.width - 70) / (data.length - 1);
+            const y = canvas.height - 20 - (data[i] - min) * yScale;
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+            // ctx.arc(x, y, 2, 0, Math.PI * 2);
+        }
+        ctx.stroke();
+    }
+
+    // import Gradient from "./color_grad"
+    Module.onRuntimeInitialized = _ => {
+        let hasRunOnce = false;
+
+        let timeStep = 0;
+
+        var dist_queue = []
+        var speed_queue = []
+        const canvas = document.getElementById('simulationCanvas');
+        var speedSlider = document.getElementById('speed');
+        var speedHeterogeneitySlider = document.getElementById('speedHeterogeneity');
+        var perceptionSlider = document.getElementById('perception');
+        var nASlider = document.getElementById('numAgents');
+        var elasticitySlider = document.getElementById('elasticity');
+        const speedIndicator = document.getElementById('speedIndicator');
+        const speedHeterogeneityIndicator = document.getElementById('speedHeterogeneityIndicator');
+        const numAgentsIndicator = document.getElementById('numAgentsIndicator');
+        const perceptionIndicator = document.getElementById('perceptionIndicator');
+        const elasticityIndicator = document.getElementById('elasticityIndicator');
+        const computeIndicator = document.getElementById('compute');
+        const dispIndicator = document.getElementById('display');
+        const wallCheckbox = document.getElementById('mySwitch');
+        var agent_id_center = -1;
+        var agent1 = -1;
+        var agent2 = -1;
+        var showP = false
+        speedSlider.oninput = function() {
+            setSpeed(this.value);
+        }
+        speedHeterogeneitySlider.oninput = function() {
+            setSpeedHeterogeneity(this.value);
+        }
+        nASlider.oninput = function() {
+            setNumAgents(this.value);
+        }
+        perceptionSlider.oninput = function() {
+            setPerceptionRadius(this.value)
+        }
+        elasticitySlider.oninput = function() {
+            setElasticity(this.value)
+        }
+        perceptionSlider.onmousedown = function(){
+            showP  = true;
+        }
+        perceptionSlider.onmouseup = function(){
+            showP  = false;
+        }
+        wallCheckbox.onchange = function() {
+            sim.toggleWalls(this.checked);
+        }
+        var mousePos = {x: 0.0, y: 0.0};
+        canvas.addEventListener('mousedown', function(event) {
+            var x = event.pageX - canvas.offsetLeft
+            var y = event.pageY - canvas.offsetTop;
+            mousePos = getWindowToCanvas(canvas, x, y);
+            const ids = sim.getFocusAgent(mousePos.x, mousePos.y);
+            agent_id_center = ids[0];
+            agent1 = ids[1];
+            agent2 = ids[2];
+        })
+        const ctx = canvas.getContext('2d');
+        ctx.canvas.width  = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+        const ratio = window.innerWidth/window.innerHeight;
+        var f1 = 1;
+        var f2 = 1;
+        if (ratio > 1){
+            f2 = 1/ratio;
+        }
+        else {
+            f1 = ratio;
+        }
+        // const max_dist = Math.sqrt(Math.pow(15*f1, 2) + Math.pow(15*f2, 2));
+        const sim = new Module.MASSim(200, 15*f1, 15*f2);
+        ctx.beginPath();
+        ctx.setTransform(window.innerWidth/15/f1, 0, 0, window.innerHeight/15/f2, 0, 0);
+
+        // canvas.width = 1000;
+        // canvas.height = 1000;
+
+        const speedInput = document.getElementById('speed');
+        const resetBtn = document.getElementById('resetBtn');
+
+        let agents = sim.getAgents();
+        var animationId;
+        setSpeed(speedSlider.value)
+        setSpeedHeterogeneity(speedHeterogeneitySlider.value)
+        setNumAgents(nASlider.value)
+        setPerceptionRadius(perceptionSlider.value)
+        setElasticity(elasticitySlider.value)
+        function getMethods(obj) {
+            var result = [];
+            for (var id in obj) {
+                try {
+                    if (typeof(obj[id]) == "function") {
+                        result.push(id + ": " + obj[id].toString());
+                    }
+                } catch (err) {
+                    result.push(id + ": inaccessible");
+                }
+            }
+            return result;
+        }
+        function drawAgents() {
+            const t = performance.now();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // ctx.setTransform(100, 0, 0, 100, 0, 0);
+            const nagents= sim.nAgents();
+            var sum = 0;
+            var sumspeed = 0;
+            for (let i = 0; i < nagents; i++) {
+                const agent = agents.get(i);
+                sum = sum + agent[2];
+                sumspeed = sumspeed + agent[3];
+                ctx.setLineDash([0, 0]);
+                if (agent_id_center != -1){
+                    ctx.fillStyle = "#e5e5e5";
+                    ctx.strokeStyle = "#1c1c1c";
+                }
+                else {
+                    ctx.fillStyle = "#1c1c1c";
+                    ctx.strokeStyle = "#1c1c1c";
+                }
+                // alert(getMethods(agent).join("\n"));
+
+                ctx.beginPath();
+
+                ctx.arc(agent[0], agent[1], .04, 0, 2 * Math.PI);
+                if (i == agent_id_center){
+                    ctx.fillStyle = "#da5a5f"; //blue
+                }
+                else if (i == agent1 || i == agent2){
+                    ctx.fillStyle = "#319396";
+                }
+                ctx.fill();
+                if (showP){
+                    ctx.beginPath();
+                    ctx.arc(agent[0], agent[1], perceptionSlider.value, 0, 2 * Math.PI);
+                    ctx.strokeStyle = "#d0d0d0";
+                    ctx.lineWidth = 0.01;
+                    ctx.stroke();
+                }
+            }
+            sum = sum/nagents;
+            sumspeed = sumspeed/nagents;
+            dist_queue.push(sum)
+            speed_queue.push(sumspeed)
+            // console.log(sum)
+            if (dist_queue.length > queue_length) {
+                dist_queue.shift();
+                speed_queue.shift();
+            }
+            if (agent_id_center != -1){
+                const agent = agents.get(agent_id_center);
+                ctx.setLineDash([0.06, 0.04]);
+                ctx.beginPath();
+                ctx.arc(agent[0], agent[1], perceptionSlider.value, 0, 2 * Math.PI);
+                ctx.strokeStyle = "#a8a8a8";
+                ctx.lineWidth = 0.01;
+                ctx.stroke();
+            }
+            ctx.fillStyle = "#1c1c1c";
+            ctx.strokeStyle = "#1c1c1c";
+            // console.log(performance.now())
+            timeStep = timeStep + 1;
+            drawGraph(dist_queue, timeStep, 'graphCanvas');
+            drawGraph(speed_queue, timeStep, 'graphSpeed');
+            dispIndicator.textContent = "Visualization time: " + ((performance.now() - t)).toFixed(1) + " ms";
+            animationId = requestAnimationFrame(drawAgents);
+        }
+        function updateSimulation() {
+            // var pos = getMousePos(canvas, evt);
+            const t = performance.now();
+            sim.step();
+            // console.log(performance.now() - t);
+            agents = sim.getAgents();
+            computeIndicator.textContent = "Simulation time: " + ((performance.now() - t)).toFixed(1) + " ms";
+            // console.log(performance.now() - t);
+            // console.log("---")
+            hasRunOnce = true;
+            setTimeout(updateSimulation, 20);
+        }
+
+        function resetSimulation() {
+            agent_id_center = -1;
+            agent1 = -1;
+            agent2 = -1;
+            // cancelAnimationFrame(animationId);
+            sim.reset();
+            // agents = sim.getAgents();
+            // updateSimulation();
+        }
+        function setPolicy1() {
+            sim.setPolicy1()
+        }
+        function setPolicy2() {
+            sim.setPolicy2()
+        }
+        function setSpeed(speed){
+            sim.setSpeed(speed/2);
+            speedIndicator.textContent = speed/2;
+            // console.log(speed.value);
+        }
+        function setSpeedHeterogeneity(speedHeter){
+            speedHeterogeneityIndicator.textContent = speedHeter;
+            speedHeter = speedHeter/1.01;
+            sim.setSpeedHeterogeneity(speedHeter);
+            console.log(speedHeter);
+        }
+        function setElasticity(elasticity){
+            sim.setElasticity(elasticity);
+            elasticityIndicator.textContent = elasticity;
+            if (elasticity > 0.6) {
+                document.getElementById("elasticity-warning").classList.add("show");
+            }
+            else{
+                document.getElementById("elasticity-warning").classList.remove("show");
+            }
+            // console.log(speed.value);
+        }
+        function setPerceptionRadius(radius){
+            sim.setPerceptionRadius(radius);
+            perceptionIndicator.textContent = radius;
+            // console.log(speed.value);
+        }
+        function setNumAgents(input){
+            agent_id_center = -1;
+            agent1 = -1;
+            agent2 = -1;
+            sim.setNumAgents(input);
+            agents = sim.getAgents();
+            numAgentsIndicator.textContent = input;
+            // console.log(speed.value);
+        }
+        setTimeout(updateSimulation, 20);
+        new Promise((resolve) => {
+            const checkInterval = setInterval(() => {
+                if (hasRunOnce) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 20); // Check every 100ms
+        }).then(() => {
+            animationId = requestAnimationFrame(drawAgents);
+        });
+        // speedInput.addEventListener('input', setSpeed);
+        resetBtn.addEventListener('click', resetSimulation);
+        policy1Btn.addEventListener('click', setPolicy1);
+        policy2Btn.addEventListener('click', setPolicy2);
+        ctx.restore()
+    };
+</script>
+</body>
+</html>

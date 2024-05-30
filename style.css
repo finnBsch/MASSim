@@ -1,0 +1,350 @@
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+#container {
+    position: relative;
+}
+
+#simulationCanvas {
+    /*border: 1px solid black;*/
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+/*.header h2 {*/
+
+/*}*/
+
+#controls-and-graph {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 10px;
+    padding: 10px;
+    z-index: 2; /* Ensure controls-container is above graphCanvas */
+}
+.outer-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #333;
+}
+.outer-container.collapsed_ {
+    /*padding: 5px 10px; !* Adjust these values as needed *!*/
+    height: auto;
+
+}
+#graph-label {
+    margin-right: 5px;
+    white-space: nowrap; /* Prevent labels from wrapping */
+}
+.content_div {
+    margin-top: 10px; /* Adjust the value as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.collapsed {
+    height: 0px;
+    overflow: hidden;
+    padding: 0; /* Add this line */
+    margin: 0;
+}
+.container-title {
+    /*position: absolute;*/
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 0;
+}
+
+.collapse-button {
+    box-sizing: border-box; /* Add this line */
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /*position: absolute;*/
+    right: 10px;
+}
+
+.collapse-button:hover {
+    background-color: #555;
+}
+
+#controls_title {
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center; /* Add this line */
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.performance_container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center horizontally */
+    gap: 10px;
+    font-size: 12px;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    margin-top: 0px;
+}
+
+.slider-indicator {
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    margin-top: 5px;
+}
+.slider-label {
+    margin-right: 5px;
+    white-space: nowrap; /* Prevent labels from wrapping */
+}
+
+/* Sliders */
+input[type="range"] {
+    -webkit-appearance: none;
+    -moz-appearance: none; /* Firefox */
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 300px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    background: #ddd;
+    height: 6px;
+    border-radius: 3px;
+}
+
+input[type="range"]::-moz-range-track {
+    background: #ddd;
+    height: 6px;
+    border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #333;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    margin-top: -5px;
+}
+
+input[type="range"]::-moz-range-thumb {
+    background: #333;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    margin-top: -5px;
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #ccc;
+}
+
+input[type="range"]:focus::-moz-range-track {
+    background: #ccc;
+}
+
+#resetBtn {
+    margin-top: 10px;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#resetBtn:hover {
+    background-color: #555;
+}
+
+#tips {
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+
+#tips p {
+    margin: 5px 0;
+}
+
+#elasticity-warning{
+    display: none; /* initially hide the warning */
+    font-size: 12px;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    margin-top: 5px;
+}
+
+#elasticity-warning.show {
+    display: block; /* show the warning when the class 'show' is added */
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+.button-group input[type="radio"] {
+    display: none; /* Hide the actual radio buttons */
+}
+
+.button-group label {
+    display: inline-block;
+    padding: 10px 32px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-group input[type="radio"]:checked + label {
+    background-color: #333;
+    color: #fff;
+}
+
+
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #eee;
+  color: black;
+  border-radius: 6px;
+  border-style: solid;
+  border-color: black;
+  border-width: 1.5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -90px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 0.8;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 43px; /* Adjust the width as needed */
+    height: 24px; /* Adjust the height as needed */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slide-switch-container {
+    display: flex;
+    align-items: center; /* This will center the items vertically */
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    /*height: 28px; !* Adjust the height as needed *!*/
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+}
+
+input:checked + .slider {
+    background-color: #333;
+}
+
+input:checked + .slider:before {
+    transform: translateX(19px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+    /*height: 22px; !* Adjust the height as needed *!*/
+    /*width: 22px; !* Adjust the width as needed *!*/
+}
+
+.switch-label {
+    margin-right: 10px;
+}

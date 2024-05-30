@@ -1,0 +1,1 @@
+ emcc -lembind -O3 -s ALLOW_MEMORY_GROWTH -o mas_sim.js src/mas_sim/* src/bindings.cpp -I include/ -I ext_include/
